@@ -1,0 +1,75 @@
+﻿@using Resyaku.Application.Features.ServiceAreas.Queries.GetAllServiceAreas
+@using Resyaku.Application.Features.Tables.Commands.CreateTable
+@using Resyaku.Web.Common
+@model CreateTableCommand
+
+@if (ViewBag.TableCreationError is not null)
+{
+	<div class="alert alert-dismissible alert-danger mb-4" role="alert">
+		<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+		<span>@ViewBag.TableCreationError</span>
+	</div>
+}
+<h4 class="mb-4">Agregar mesa</h4>
+<form asp-area="Admin" asp-controller="Table" asp-action="CreateTable" method="post">
+	<div class="row g-4">
+		<div class="col-md-6">
+			<div class="row g-2 mb-3">
+				<div class="col-6 form-group @ViewData.ErrorClass("Name", "has-danger")">
+					<label for="name" class="mb-2">Nombre de la mesa:</label>
+					<input asp-for="Name"
+						   id="name"
+						   class="form-control @ViewData.ErrorClass("Name", "is-invalid")" />
+					<span asp-validation-for="Name" class="invalid-feedback"></span>
+				</div>
+				<div class="row g-2 mb-3">
+					<div class="col-6 form-group @ViewData.ErrorClass("MinCapacity", "has-danger")">
+						<label for="minCapacity" class="mb-2 ">Cobertura Mínima:</label>
+						<input asp-for="MinCapacity"
+							   id="minCapacity"
+							   type="number"
+							   class="form-control @ViewData.ErrorClass("MinCapacity", "is-invalid")" />
+						<span asp-validation-for="MinCapacity" class="invalid-feedback"></span>
+					</div>
+					<div class="col-6 form-group @ViewData.ErrorClass("MaxCapactity", "has-danger")">
+						<label for="maxCapacity" class="mb-2 ">Máximo de comensales por reserva:</label>
+						<input asp-for="MaxCapacity"
+							   id="maxCapacity"
+							   type="number"
+							   class="form-control @ViewData.ErrorClass("MaxCapacity", "is-invalid")" />
+						<span asp-validation-for="MaxCapacity" class="invalid-feedback"></span>
+					</div>
+				</div>
+				<div class="row g-2 mb-3">
+					<div class="col-6 form-group @ViewData.ErrorClass("ServiceAreaId", "has-danger")">
+						<label for="serviceArea" class="mb-2">Área de servicio:</label>
+						<select asp-for="ServiceAreaId"
+							   id="serviceArea"
+								class="form-control @ViewData.ErrorClass("ServiceAreaId", "is-invalid")">
+							<option value="0">--Seleccionar--</option>
+							@foreach (var serviceArea in ViewBag.ServicesAreas as List<GetAllServiceAreasDto> ?? [])
+							{
+								<option value="@serviceArea.Id">@serviceArea.Name</option>
+							}
+						   </select>
+						<span asp-validation-for="ServiceAreaId" class="invalid-feedback"></span>
+					</div>
+				</div>
+				<div class="form-group form-check form-switch">
+					<input class="form-check-input" asp-for="IsActive" type="checkbox" id="flexSwitchCheckChecked" checked>
+					<label class="form-check-label" for="flexSwitchCheckChecked">En funcionamiento</label>
+					<span asp-validation-for="IsActive" class="invalid-feedback"></span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="d-flex flex-row justify-content-between align-items-center mt-4">
+		<a asp-controller="Table" asp-action="Index" class="text-info">Cancelar</a>
+		<button type="submit" class="btn btn-success">
+			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+				<path fill="#fff" d="M17.59 3.59c-.38-.38-.89-.59-1.42-.59H5a2 2 0 0 0-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V7.83c0-.53-.21-1.04-.59-1.41zM12 19c-1.66 0-3-1.34-3-3s1.34-3 3-3s3 1.34 3 3s-1.34 3-3 3m1-10H7c-1.1 0-2-.9-2-2s.9-2 2-2h6c1.1 0 2 .9 2 2s-.9 2-2 2" />
+			</svg>
+			<span>Crear mesa</span>
+		</button>
+	</div>
+</form>

@@ -1,0 +1,222 @@
+﻿::after,
+::before {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+a {
+    text-decoration: none;
+}
+
+li {
+    list-style: none;
+}
+
+h1 {
+    font-weight: 600;
+    font-size: 1.5rem;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+}
+
+.wrapper {
+    display: flex;
+}
+
+#sidebar {
+    background-color: #343a40;
+    width: 70px;
+    min-width: 70px;
+    z-index: 1000;
+    transition: all 0.35s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 60px;
+    bottom: 0;
+    left: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: calc(100vh - 60px);
+    box-shadow: 10px 0px 20px rgba(149, 157, 165, 0.3);
+}
+
+    #sidebar.expand {
+        width: 260px;
+        min-width: 260px;
+    }
+
+.main {
+    /*    min-height: 100vh;*/
+    width: 100%;
+    overflow: hidden;
+    transition: all 0.35s ease-in-out;
+    margin-left: 70px;
+    margin-top: 60px; /* para header */
+}
+
+#header {
+    height: 60px; /* Altura fija del header */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1001; /* Asegura que el header esté por encima del sidebar */
+    display: flex;
+    align-items: center;
+    background-color: #343a40 !important; /* Color del fondo */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Línea sutil inferior */
+}
+
+    /* Espaciado dentro del header */
+    #header .toggle-btn {
+        background: transparent;
+        border: none;
+        color: #fff;
+        cursor: pointer;
+    }
+
+    #header .header-logo a {
+        font-size: 1.2rem;
+        font-weight: 600;
+        text-decoration: none;
+        color: #FFF;
+        white-space: nowrap; /* Evita saltos de línea */
+    }
+
+    /* Usuario autenticado en la parte derecha */
+    #header .user-info {
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+#sidebar.expand ~ .main {
+    margin-left: 260px;
+}
+
+.toggle-btn {
+    background-color: transparent;
+    cursor: pointer;
+    border: 0;
+    padding: 1rem 1.2rem;
+}
+
+    .toggle-btn i {
+        font-size: 1.5rem;
+        color: #FFF;
+    }
+
+.sidebar-logo {
+    margin: auto 0;
+}
+
+    .sidebar-logo a {
+        color: #FFF;
+        font-size: 1.15rem;
+        font-weight: 600;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        transition: all 0.25s ease-in-out;
+    }
+
+#sidebar:not(.expand) .sidebar-logo,
+#sidebar:not(.expand) a.sidebar-link span,
+#sidebar:not(.expand) button.sidebar-link span {
+    display: none;
+}
+
+.sidebar-nav {
+    padding: 1rem 0 2rem 0;
+    flex: 1 1 auto;
+}
+
+a.sidebar-link {
+    padding: .625rem 1.625rem;
+    color: var(--bs-gray-500); 
+    display: block;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    border-left: 3px solid transparent;
+}
+
+button.sidebar-link {
+    display: block;
+    width: 100%;
+    padding: .625rem 1.625rem;
+    color: var(--bs-gray-500);
+    background-color: #343a40;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    border-left: 3px solid transparent;
+    border-top: none;
+    border-bottom: none;
+}
+
+a.sidebar-link:hover, button.sidebar-link:hover {
+    background-color: rgba(255, 255, 255, .075);
+    color: var(--bs-gray-100);
+    border-left: 3px solid var(--bs-link-color);
+}
+
+    a.sidebar-link.active, button.sidebar-link.active {
+        background-color: rgba(255, 255, 255, .075);
+        color: var(--bs-gray-100);
+        border-left: 3px solid var(--bs-link-color);
+    }
+
+.sidebar-link > span {
+    margin-left: .75rem;
+}
+
+.sidebar-item {
+    position: relative;
+}
+
+    .sidebar-item, .sidebar-item > a {
+        color: var(--bs-gray-500) !important;
+    }
+
+
+
+#sidebar:not(.expand) .sidebar-item .sidebar-dropdown {
+    position: absolute;
+    top: 0;
+    left: 70px;
+    background-color: #0e2238;
+    padding: 0;
+    min-width: 15rem;
+    display: none;
+}
+
+#sidebar:not(.expand) .sidebar-item:hover .has-dropdown + .sidebar-dropdown {
+    display: block;
+    max-height: 15em;
+    width: 100%;
+    opacity: 1;
+}
+
+#sidebar.expand .sidebar-link[data-bs-toggle="collapse"]::after {
+    border: solid;
+    border-width: 0 .075rem .075rem 0;
+    content: "";
+    display: inline-block;
+    padding: 2px;
+    position: absolute;
+    right: 1.5rem;
+    top: 1.4rem;
+    transform: rotate(-135deg);
+    transition: all .2s ease-out;
+}
+
+#sidebar.expand .sidebar-link[data-bs-toggle="collapse"].collapsed::after {
+    transform: rotate(45deg);
+    transition: all .2s ease-out;
+}
+
+.table-item {
+    cursor: pointer;
+}

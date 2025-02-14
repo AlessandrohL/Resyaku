@@ -1,0 +1,123 @@
+﻿@using Resyaku.Web.Common
+@using Resyaku.Web.ViewModels.Users
+@model UpdateUserViewModel
+
+@if (ViewBag.UserUpdateError is not null)
+{
+    <div class="alert alert-dismissible alert-danger mb-4" role="alert">
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <span>@ViewBag.UserUpdateError</span>
+    </div>
+}
+<h4 class="mb-4">Editar cuenta de usuario</h4>
+<form asp-controller="User" asp-action="UpdateUser" method="post">
+    <input asp-for="UserId" type="hidden" value="@Model.UserId" />
+    <div class="row g-4">
+        <!-- Primera columna -->
+        <div class="col-md-6">
+            <div class="row g-2 mb-3">
+                <div class="col-6 form-group @ViewData.ErrorClass("Firstname", "has-danger")">
+                    <label for="firstname" class="mb-2">Nombres:</label>
+                    <input asp-for="Firstname"
+                           id="firstname"
+                           value="@Model.Firstname"
+                           class="form-control @ViewData.ErrorClass("FirstName", "is-invalid")" />
+                    <span asp-validation-for="Firstname" class="invalid-feedback"></span>
+                </div>
+                <div class="col-6 form-group @ViewData.ErrorClass("Lastname", "has-danger")">
+                    <label for="lastname" class="mb-2 ">Apellidos:</label>
+                    <input asp-for="Lastname"
+                           id="lastname"
+                           value="@Model.Lastname"
+                           class="form-control @ViewData.ErrorClass("Lastname", "is-invalid")" />
+                    <span asp-validation-for="Lastname" class="invalid-feedback"></span>
+                </div>
+            </div>
+
+            <div class="mb-3 form-group @ViewData.ErrorClass("Email", "has-danger")">
+                <label for="email" class="mb-2">Correo Electrónico:</label>
+                <input asp-for="Email"
+                       id="email"
+                       value="@Model.Email"
+                       class="form-control @ViewData.ErrorClass("Email", "is-invalid")"
+                       type="email" />
+                <span asp-validation-for="Email" class="invalid-feedback"></span>
+            </div>
+
+            <div class="row g-2 mb-3">
+                <div class="col-6 form-group @ViewData.ErrorClass("Username", "has-danger")">
+                    <label for="username" class="mb-2">Username:</label>
+                    <input asp-for="Username"
+                           id="username"
+                           value="@Model.Username"
+                           class="form-control @ViewData.ErrorClass("Username", "is-invalid")" />
+                    <span asp-validation-for="Username" class="invalid-feedback"></span>
+                </div>
+                <div class="col-6 form-group @ViewData.ErrorClass("Phone", "has-danger")">
+                    <label for="phone" class="mb-2">Teléfono:</label>
+                    <input asp-for="Phone"
+                           id="phone"
+                           value="@Model.Phone"
+                           class="form-control @ViewData.ErrorClass("Phone", "is-invalid")" />
+                    <span asp-validation-for="Phone" class="invalid-feedback"></span>
+                </div>
+            </div>
+
+            <div class="mb-3 form-check form-switch">
+                <input asp-for="ChangePassword" class="form-check-input" type="checkbox" id="UpdateUserChangePasswordSwitch">
+                <label class="form-check-label" for="UpdateUserChangePasswordSwitch">Renovar contraseña</label>
+            </div>
+
+            <div class="mb-3 form-group @ViewData.ErrorClass("NewPassword", "has-danger")">
+                <label for="newpassword" class="mb-2">Nueva contraseña:</label>
+                <input asp-for="NewPassword"
+                       id="newpassword"
+                       disabled="disabled"
+                       type="password"
+                       class="form-control @ViewData.ErrorClass("NewPassword", "is-invalid")" />
+                <span asp-validation-for="NewPassword" class="invalid-feedback"></span>
+            </div>
+        </div>
+
+        <!-- Segunda columna -->
+        <div class="col-md-3">
+            <div class="form-group mb-3 @ViewData.ErrorClass("Roles", "has-danger")">
+                <label for="roles" class="mb-2">Roles:</label>
+                <select asp-for="Roles" class="form-control @ViewData.ErrorClass("Roles", "is-invalid")" multiple>
+                    @foreach (var role in ViewBag.Roles as IEnumerable<string> ?? [])
+                    {
+                        <option selected="@(Model.Roles.Contains(role))" value="@role">@role</option>
+                    }
+                </select>
+                <span asp-validation-for="Roles" class="invalid-feedback"></span>
+            </div>
+            <div class="form-check form-switch">
+                <input asp-for="LockoutEnabled" class="form-check-input" type="checkbox" id="UpdateUserLockoutSwitch">
+                <label class="form-check-label" for="UpdateUserLockoutSwitch">Bloquear acceso</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex flex-row justify-content-between align-items-center mt-4">
+        <a asp-controller="User" asp-action="Index" class="text-info">Cancelar</a>
+        <button type="submit" class="btn btn-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                <path fill="#fff" d="M17.59 3.59c-.38-.38-.89-.59-1.42-.59H5a2 2 0 0 0-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V7.83c0-.53-.21-1.04-.59-1.41zM12 19c-1.66 0-3-1.34-3-3s1.34-3 3-3s3 1.34 3 3s-1.34 3-3 3m1-10H7c-1.1 0-2-.9-2-2s.9-2 2-2h6c1.1 0 2 .9 2 2s-.9 2-2 2" />
+            </svg>
+            <span>Guardar cambios</span>
+        </button>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const changePasswordSwitch = document.querySelector('#UpdateUserChangePasswordSwitch')
+            const newPasswordInput = document.querySelector('#newpassword')
+
+            changePasswordSwitch.addEventListener('change', () => {
+                newPasswordInput.disabled = !changePasswordSwitch.checked
+            })
+        })
+    </script>
+}

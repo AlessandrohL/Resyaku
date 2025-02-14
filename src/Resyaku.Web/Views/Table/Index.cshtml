@@ -1,0 +1,156 @@
+﻿@using Resyaku.Application.Features.ServiceAreas.Queries.GetAllServiceAreas
+@using Resyaku.Web.ViewModels.Tables
+@model GetAllTablesViewModel
+
+<div class="d-flex flex-row justify-content-between">
+    <h3 class="d-inline-block mb-3">Mesas</h3>
+    <div class="d-flex flex-row justify-content-between gap-2">
+        <a asp-controller="Table" asp-action="CreateTable" class="btn btn-success align-content-center">+ Agregar mesa</a>
+    </div>
+</div>
+<form asp-controller="Table" asp-action="Index" method="get" class="mt-3 mb-5">
+    <div class="form-row d-flex flex-row gap-3 flex-wrap mb-3">
+        <div class="form-group col-md-4">
+            <label for="SearchTerm" class="mb-2">Nombres</label>
+            <input type="text" 
+                class="form-control" 
+                id="SearchTerm" 
+                name="SearchTerm" 
+                value="@Model.QueryParameters.SearchTerm"
+                   placeholder="Buscar por nombre, p. ej.: T2" />
+        </div>
+        <div class="form-group col-md-4">
+            <label for="Lastname" class="mb-2">Área de servicio</label>
+            <select class="form-control" id="ServiceArea" name="ServiceAreaId" value="@Model.QueryParameters.ServiceAreaId">
+                <option value="0">--Seleccionar--</option>
+                @foreach (var serviceArea in ViewBag.ServicesAreas as List<GetAllServiceAreasDto> ?? []) 
+                {
+                    <option selected="@(Model.QueryParameters.ServiceAreaId == serviceArea.Id)" 
+                        value="@serviceArea.Id">
+                        @serviceArea.Name
+                        </option>
+                }
+            </select>
+        </div>
+    </div>
+    <div class="d-flex flex-row gap-3">
+        <button type="submit" class="btn btn-success">Filtrar</button>
+        <a asp-controller="Table" asp-action="Index" class="btn btn-info" id="btn-reset-filter">Restablecer filtro</a>
+    </div>
+</form>
+<table class="table table-striped mt-4">
+    <thead>
+        <tr>
+            <th scope="col">Nombres</th>
+            <th scope="col">Cobertura Mínima</th>
+            <th scope="col">Máximo de comensales por reserva</th>
+            <th scope="col">Área de servicio</th>
+            <th scope="col">Activo</th>
+            <th scope="col">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var table in Model.PagedTables.Items)
+        {
+            <tr>
+                <td class="text-truncate align-content-center">@table.Name</td>
+                <td class="align-content-center">@table.MinCapacity</td>
+                <td class="align-content-center">@table.MaxCapacity</td>
+                <td class="align-content-center">@table.ServiceAreaName</td>
+                <td class="align-content-center">
+                    @if(table.IsActive) 
+                    {
+                        <span class="badge bg-info">Sí</span>
+                    }
+                    else 
+                    {
+                        <span class="badge bg-danger">No</span>
+                    }
+                </td>
+                <td class="align-content-center">
+                    <div class="dropdown d-flex justify-content-center">
+                        <button class="btn btn-secondary dropdown-toggle d-flex justify-content-center align-items-center py-3"
+                                type="button"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" asp-controller="Table" asp-action="UpdateTable" asp-route-tableId="@table.TableId">Editar</a></li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div>
+    <ul class="pagination">
+        @if (Model.PagedTables.HasPreviousPage)
+        {
+            <li class="page-item">
+                <a class="page-link" href="@Url.Action("Index", new {
+                    page = Model.PagedTables.Page - 1,
+                    pageSize = Model.PagedTables.PageSize,
+                    searchTerm = Model.QueryParameters.SearchTerm,
+                    serviceAreaId = Model.QueryParameters.ServiceAreaId })">
+                    &laquo;
+                </a>
+            </li>
+        }
+
+        <li class="page-item active">
+            <a class="page-link" href="#">@Model.PagedTables.Page</a>
+        </li>
+
+        @if (Model.PagedTables.HasNextPage)
+        {
+            <li class="page-item">
+                <a class="page-link" href="@Url.Action("Index", new {
+                    page = Model.PagedTables.Page + 1,
+                    pageSize = Model.PagedTables.PageSize,
+                    searchTerm = Model.QueryParameters.SearchTerm,
+                    serviceAreaId = Model.QueryParameters.ServiceAreaId })">
+                    &raquo;
+                </a>
+            </li>
+        }
+    </ul>
+</div>
+@if (TempData["Table.Created"] is not null)
+{
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="successToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">@TempData["Table.Created"]</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+}
+
+@if (TempData["Table.Updated"] is not null)
+{
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="successToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">@TempData["Table.Updated"]</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const toastElement = document.getElementById('successToast');
+            if (toastElement) {
+                const toast = new bootstrap.Toast(toastElement, {
+                    autohide: true,
+                    delay: 3000
+                });
+                toast.show();
+            }
+        });
+    </script>
+}
