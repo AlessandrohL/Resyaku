@@ -31,7 +31,8 @@ namespace Resyaku.Domain.Entities
         public string RowUlid { get; init; } = null!;
 
         public static Booking Create(
-            string bookingReference,
+            string bookingReferenceCode,
+            int customerId,
             DateTime bookingDate,
             TimeSpan bookingStartTime,
             int durationInMinutes,
@@ -39,14 +40,14 @@ namespace Resyaku.Domain.Entities
             BookingStatus bookingStatus,
             string? privateComment,
             string? publicComment,
-            Customer customer,
             string contactPhone,
             bool isWalking,
             string rowUlid)
         {
             Booking booking = new()
             {
-                Reference = bookingReference,
+                Reference = bookingReferenceCode,
+                CustomerId = customerId,
                 BookingDate = bookingDate,
                 BookingTime = bookingStartTime,
                 Duration = durationInMinutes,
@@ -57,7 +58,6 @@ namespace Resyaku.Domain.Entities
                 Status = bookingStatus,
                 PrivateComment = privateComment,
                 PublicComment = publicComment,
-                Customer = customer,
                 ContactPhone = contactPhone,
                 IsWalking = isWalking,
                 CreatedOnUtc = DateTime.UtcNow,

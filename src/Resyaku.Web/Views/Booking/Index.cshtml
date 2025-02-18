@@ -1,0 +1,132 @@
+﻿@using Resyaku.Domain.Enums
+@using Resyaku.Web.ViewModels.Bookings
+@model GetAllBookingsViewModel
+
+<div class="d-flex flex-row justify-content-between">
+    <h3 class="d-inline-block mb-3">Reservas</h3>
+    <div class="d-flex flex-row justify-content-between gap-2">
+        <a asp-controller="Booking" asp-action="CreateBooking" class="btn btn-success align-content-center">+ Nueva reserva</a>
+    </div>
+</div>
+<form asp-controller="Booking" asp-action="Index" method="get" class="mb-4">
+    <div class="form-row d-flex flex-row gap-3 flex-wrap mb-3">
+        <div class="form-group col-md-4 col-lg-3">
+            <label for="CustomerName" class="mb-1">Nombre de cliente:</label>
+            <input type="text" class="form-control" id="CustomerName" name="CustomerName" value="@Model.QueryParameters.CustomerName" />
+        </div>
+        <div class="form-group col-md-4 col-lg-2">
+            <label for="CustomerPhone" class="mb-1">Telefono</label>
+            <input type="tel" class="form-control" id="CustomerPhone" name="CustomerPhone" value="@Model.QueryParameters.CustomerPhone" />
+        </div>
+        <div class="form-group col-md-4 col-lg-3">
+            <label for="CustomerEmail" class="mb-1">Correo Electrónico</label>
+            <input type="email" class="form-control" id="CustomerEmail" name="CustomerEmail" value="@Model.QueryParameters.CustomerEmail" />
+        </div>
+        <div class="form-group col-md-4 col-lg-2">
+            <label for="CustomerDni" class="mb-1">DNI</label>
+            <input type="text" class="form-control" id="CustomerDni" name="CustomerDni" value="@Model.QueryParameters.CustomerDni" />
+        </div>
+        <div class="form-group col-md-4 col-lg-2">
+            <label for="StartDate" class="mb-1">Desde:</label>
+            <input type="date" class="form-control" id="StartDate" name="StartDate" value="@Model.QueryParameters.StartDate" />
+        </div>
+        <div class="form-group col-md-4 col-lg-2">
+            <label for="EndDate" class="mb-1">Hasta:</label>
+            <input type="date" class="form-control" id="EndDate" name="EndDate" value="@Model.QueryParameters.EndDate" />
+        </div>
+    </div>
+    <div class="d-flex flex-row gap-3">
+        <button type="submit" class="btn btn-success">Filtrar</button>
+        <a asp-controller="Booking" asp-action="Index" class="btn btn-info" id="btn-reset-filter">Restablecer filtro</a>
+    </div>
+</form>
+<table class="table table-striped mt-4">
+    <thead>
+        <tr>
+            <th scope="col">Ref.</th>
+            <th scope="col">Nombres</th>
+            <th scope="col">DNI</th>
+            <th scope="col">Fecha de Creación</th>
+            <th scope="col">Fecha de Reserva</th>
+            <th scope="col">Estado</th>
+            <th scope="col">Mesa</th>
+            <th scope="col">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var booking in Model.BookingResponses.Items) 
+        {
+            <tr>
+                <th class="align-content-center link-primary">@booking.BookingReference</th>
+                <th scope="row" class="text-truncate align-content-center">@booking.CustomerName</th>
+                <td class="align-content-center">@booking.CustomerDni</td>
+                <td class="align-content-center">@booking.CreationDate.ToLocalTime().ToString()</td>
+                <td class="align-content-center">@booking.BookingDate.ToString()</td>
+                <td class="align-content-center">
+                    @{
+                        string badgeClass = "";
+                        string statusText = "";
+
+                        switch (booking.BookingStatus)
+                        {
+                            case BookingStatus.Confirmed:
+                                badgeClass = "badge bg-success";
+                                statusText = "Confirmado";
+                                break;
+                            case BookingStatus.Cancelled:
+                                badgeClass = "badge bg-danger";
+                                statusText = "Cancelado";
+                                break;
+                            case BookingStatus.Pending:
+                                badgeClass = "badge bg-warning";
+                                statusText = "Pendiente";
+                                break;
+                            case BookingStatus.Completed:
+                                badgeClass = "badge bg-primary";
+                                statusText = "Completado";
+                                break;
+                            default:
+                                badgeClass = "badge bg-secondary";
+                                statusText = "Desconocido";
+                                break;
+                        }
+                    }
+                    <span class="badge @badgeClass">@statusText</span>
+                </td>
+                <td class="align-content-center">
+                    @string.Join(", ", booking.Tables)
+                </td>
+                <td class="align-content-center">
+                    <div class="dropdown d-flex justify-content-center">
+                        <button class="btn btn-secondary dropdown-toggle d-flex justify-content-center align-items-center py-3"
+                                type="button"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item">Ver detalles</a></li>
+                            <li><a class="dropdown-item">Editar</a></li>
+                            <li><a class="dropdown-item">Cambiar estado</a></li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@await Html.PartialAsync("_ToastMessage", ("success", TempData["Booking.Created"] as string))
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const toastElement = document.getElementById('toastMessage');
+            if (toastElement) {
+                const toast = new bootstrap.Toast(toastElement, {
+                    autohide: false,
+                });
+                toast.show();
+            }
+        });
+    </script>
+}

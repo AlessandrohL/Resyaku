@@ -1,0 +1,207 @@
+﻿@using Resyaku.Domain.Enums
+@using Resyaku.Web.Common
+@using Resyaku.Web.ViewModels.Bookings
+@model CreateBookingViewModel
+
+<section class="mb-4">
+    <div class="d-flex flex-row justify-content-between mb-3">
+        <h4 class="d-inline-block">Detalles de la reserva</h4>
+    </div>
+    <form asp-controller="Booking" asp-action="CreateBooking" id="create-reservation-form" method="post" class="mb-5">
+        <div class="form-row d-flex flex-row gap-3 flex-wrap mb-3">
+            <div class="form-group col-md-4 col-lg-3 @ViewData.ErrorClass("BookingDate", "has-danger")">
+                <label for="BookingDate" class="mb-1 form-label">Fecha:</label>
+                <input 
+                asp-for="BookingDate" 
+                type="date" 
+                value="@DateTime.Now.ToString("yyyy-MM-dd")"
+                min="@DateTime.Now.ToString("yyyy-MM-dd")"
+                class="form-control @ViewData.ErrorClass("BookingDate", "is-invalid")"
+                required />
+                <span asp-validation-for="BookingDate" class="invalid-feedback"></span>
+            </div>
+            <div class="form-group col-md-4 col-lg-2 @ViewData.ErrorClass("BookingTime", "has-danger")">
+                <label for="BookingTime" class="mb-1 form-label">Hora:</label>
+                <select 
+                asp-for="BookingTime"
+                class="form-select @ViewData.ErrorClass("BookingTime", "is-invalid")"
+                required
+                >
+                    @foreach (var time in Model.BookingAvailability!.AvailableBookingTimes)
+                    {
+                        <option value="@time">@time.ToString(@"hh\:mm")</option>
+                    }
+                </select>
+                <span asp-validation-for="BookingTime" class="invalid-feedback"></span>
+            </div>
+            <div class="form-group col-md-4 col-lg-2 @ViewData.ErrorClass("Duration", "has-danger")">
+                <label for="Duration" class="mb-1 form-label">Duración:</label>
+                <select 
+                    asp-for="Duration"
+                    class="form-select @ViewData.ErrorClass("Duration", "is-invalid")"
+                    required
+                >
+                    @foreach (var duration in Model.BookingAvailability!.AvailableDurations)
+                    {
+                        <option value="@duration">
+                            @(duration >= 60
+                                ? $"{duration / 60}:{(duration % 60).ToString("D2")} horas"
+                                : $"{duration} minutos")
+                        </option>
+                    }
+                </select>
+                <span asp-validation-for="Duration" class="invalid-feedback"></span>
+            </div>
+            <div class="form-group col-md-4 col-lg-2 @ViewData.ErrorClass("GuestCount", "has-danger")">
+                <label for="GuestCount" class="mb-1 form-label">Cant. comensales:</label>
+                <select 
+                    asp-for="GuestCount"
+                    class="form-select @ViewData.ErrorClass("GuestCount", "is-invalid")"
+                    required
+                >
+                    @foreach (var guest in Model.BookingAvailability!.AvailableGuestCounts)
+                    {
+                        <option value="@guest">@guest</option>
+                    }
+                </select>
+                <span asp-validation-for="GuestCount" class="invalid-feedback"></span>
+            </div>
+            <div class="form-group col-md-4 col-lg-2 @ViewData.ErrorClass("BookingStatus", "has-danger")">
+                <label for="BookingStatus" class="mb-1 form-label">Estado:</label>
+                <select 
+                    asp-for="BookingStatus" 
+                    asp-items="Html.GetEnumSelectList<BookingStatus>()"
+                    class="form-select @ViewData.ErrorClass("BookingStatus", "is-invalid")"
+                    required
+                ></select>
+                <span asp-validation-for="BookingStatus" class="invalid-feedback"></span>
+            </div>
+        </div>
+        <div class="form-row d-flex flex-row gap-3 flex-wrap mb-3">
+            <div class="form-group col-md-4 col-lg-3 @ViewData.ErrorClass("PrivateComment", "has-danger")">
+                <label for="PrivateComment" class="mb-1 form-label">Comentario de reserva privada</label>
+                <textarea 
+                    asp-for="PrivateComment" 
+                    class="form-control @ViewData.ErrorClass("PrivateComment", "is-invalid")"></textarea>
+                <span asp-validation-for="PrivateComment" class="invalid-feedback"></span>
+            </div>
+            <div class="form-group col-md-4 col-lg-3 @ViewData.ErrorClass("PublicComment", "has-danger")">
+                <label for="PublicComment" class="mb-1 form-label">Comentario de la reserva:</label>
+                <textarea 
+                    asp-for="PublicComment"
+                    class="form-control @ViewData.ErrorClass("PublicComment", "is-invalid")"></textarea>
+                <span asp-validation-for="PublicComment" class="invalid-feedback"></span>
+            </div>
+        </div>
+
+        <input type="hidden" asp-for="TableIds" value="@Model.TableIds" />
+
+        <!-- SECCIÓN ASIENTOS DE MESA -->
+        <section class="mt-5">
+            <div class="d-flex flex-row justify-content-between my-4">
+                <h4 class="d-inline-block">Asientos de mesa</h4>
+            </div>
+            <div class="alert alert-warning" id="table-selection-alert" role="alert">
+                <h6 class="alert-heading fw-bold" id="alert-title">Advertencia:</h6>
+                <p class="mb-0">No se ha seleccionado ninguna mesa todavía.</p>
+            </div>
+            <div class="d-flex flex-row gap-2 my-3">
+                <h6 class="fw-bold">Seleccionado:</h6>
+                <div id="selected-tables-container" class="selected-tables d-flex flex-row gap-2 justify-content-start align-items-center flex-wrap">
+                </div>
+            </div>
+            <div class="accordion d-none" id="tables-accordion-container"></div>
+            <p class="text-dark-emphasis mt-2" id="tables-info-message">La fecha, hora y duración deben introducirse para que se muestren las mesas disponibles.</p>
+            <div class="d-flex align-items-center d-none" id="loading-tables-indicator">
+                <strong role="status">Loading...</strong>
+                <div class="spinner-border ms-auto" aria-hidden="true"></div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN DETALLES DEL CLIENTE -->
+        <section class="mt-5">
+            <div class="d-flex flex-row justify-content-between mt-1 mb-3">
+                <h4 class="d-inline-block">Detalles del cliente</h4>
+            </div>
+            <div class="form-row d-flex flex-row gap-3 flex-wrap mb-3">
+                <div class="form-group col-md-4 col-lg-2 @ViewData.ErrorClass("CustomerDni", "has-danger")">
+                    <label for="CustomerDni" class="mb-1 form-label">DNI:</label>
+                    <div class="input-group">
+                        <input 
+                            asp-for="CustomerDni" 
+                            type="text" 
+                            maxlength="8" 
+                            value="@Model.CustomerDni"
+                            class="form-control @ViewData.ErrorClass("CustomerDni", "is-invalid")" />
+                        <button class="btn btn-info rounded-end" id="btn-search-customer" type="button">Buscar</button>
+                        <span asp-validation-for="CustomerDni" class="invalid-feedback"></span>
+                    </div>
+                </div>
+                <div class="form-group col-md-4 col-lg-2 @ViewData.ErrorClass("CustomerName", "has-danger")">
+                    <label for="CustomerName" class="mb-1 form-label">Nombre:</label>
+                    <input 
+                        asp-for="CustomerName" 
+                        type="text" 
+                        value="@Model.CustomerName"
+                        class="form-control @ViewData.ErrorClass("CustomerName", "is-invalid")" />
+                    <span asp-validation-for="CustomerName" class="invalid-feedback"></span>
+                </div>
+                <div class="form-group col-md-4 col-lg-2 @ViewData.ErrorClass("CustomerLastname", "has-danger")">
+                    <label for="CustomerLastname" class="mb-1 form-label">Apellidos:</label>
+                    <input 
+                        asp-for="CustomerLastname" 
+                        type="text" 
+                        value="@Model.CustomerLastname"
+                        class="form-control @ViewData.ErrorClass("CustomerLastname", "is-invalid")" />
+                    <span asp-validation-for="CustomerLastname" class="invalid-feedback"></span>
+                </div>
+                <div class="form-group col-md-4 col-lg-3 @ViewData.ErrorClass("CustomerEmail", "has-danger")">
+                    <label for="CustomerEmail" class="mb-1 form-label">Correo Electrónico:</label>
+                    <input 
+                        asp-for="CustomerEmail" 
+                        type="email" 
+                        value="@Model.CustomerEmail"
+                        class="form-control @ViewData.ErrorClass("CustomerEmail", "is-invalid")"
+                        placeholder="example@domain.com" />
+                    <span asp-validation-for="CustomerEmail" class="invalid-feedback"></span>
+                </div>
+                <div class="form-group col-md-4 col-lg-2 @ViewData.ErrorClass("CustomerPhone", "has-danger")">
+                    <label for="CustomerPhone" class="mb-1 form-label">Teléfono:</label>
+                    <input 
+                        asp-for="CustomerPhone" 
+                        type="text" 
+                        value="@Model.CustomerPhone"
+                        class="form-control @ViewData.ErrorClass("CustomerPhone", "is-invalid")"
+                        placeholder="921997210" />
+                    <span asp-validation-for="CustomerPhone" class="invalid-feedback"></span>
+                </div>
+            </div>
+            <div class="alert alert-dismissible alert-light d-none" id="alert-customer-not-found">
+                <button type="button" class="btn-close text-light" data-bs-dismiss="alert"></button>
+                No se ha encontrado un cliente con el DNI especificado.
+            </div>
+            <div class="d-flex flex-row align-items-center justify-content-start opacity-0" id="loading-customer-indicator" style="width: 15%; cursor: default;">
+                <strong role="status" class="text-dark">Cargando datos...</strong>
+                <div class="spinner-border spinner-border-sm text-dark ms-auto" aria-hidden="true"></div>
+            </div>
+        </section>
+        <button type="submit" class="btn btn-success mt-3">Guardar reserva</button>
+    </form>
+</section>
+
+@await Html.PartialAsync("_ToastMessage", ("danger", ViewData["Booking.CreationFailure"] as string))
+
+@section Scripts {
+    <script type="module" src="~/js/booking/createBooking.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const toastElement = document.getElementById('toastMessage');
+            if (toastElement) {
+                const toast = new bootstrap.Toast(toastElement, {
+                    autohide: false,
+                });
+                toast.show();
+            }
+        });
+    </script>
+}
