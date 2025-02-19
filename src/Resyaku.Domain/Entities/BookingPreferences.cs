@@ -6,6 +6,8 @@ namespace Resyaku.Domain.Entities
     {
         public int BookingPrefId { get; set; }
         public int BookingTimeIncrement { get; set; }
+        public TimeSpan DailyOpeningTime { get; set; }
+        public TimeSpan DailyClosingTime { get; set; }
         public int MaxGuests { get; set; }
         public int MinAdvanceNotice { get; set; }
         public int MaxDaysInAdvance { get; set; }
@@ -20,6 +22,8 @@ namespace Resyaku.Domain.Entities
 
         public static BookingPreferences Create(
             int bookingTimeIncrement,
+            TimeSpan dailyOpeningTime,
+            TimeSpan dailyClosingTime,
             int maxGuests,
             int minAdvanceNotice,
             int maxDaysInAdvance,
@@ -29,6 +33,8 @@ namespace Resyaku.Domain.Entities
             return new BookingPreferences
             {
                 BookingTimeIncrement = bookingTimeIncrement,
+                DailyOpeningTime = dailyOpeningTime,
+                DailyClosingTime = dailyClosingTime,
                 MaxGuests = maxGuests,
                 MinAdvanceNotice = minAdvanceNotice,
                 MaxDaysInAdvance = maxDaysInAdvance,

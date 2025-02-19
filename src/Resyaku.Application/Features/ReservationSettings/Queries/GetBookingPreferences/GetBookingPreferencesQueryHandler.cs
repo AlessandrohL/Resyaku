@@ -16,6 +16,8 @@ namespace Resyaku.Application.Features.ReservationSettings.Queries.GetBookingPre
                 .Select(bp => new GetBookingPreferencesDto
                 {
                     BookingTimeIncrement = bp.BookingTimeIncrement,
+                    DailyOpeningTime = bp.DailyOpeningTime,
+                    DailyClosingTime = bp.DailyClosingTime,
                     MaxGuests = bp.MaxGuests,
                     MinAdvanceNotice = bp.MinAdvanceNotice,
                     MaxDaysInAdvance = bp.MaxDaysInAdvance,

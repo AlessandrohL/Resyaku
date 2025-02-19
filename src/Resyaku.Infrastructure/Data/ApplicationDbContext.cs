@@ -59,7 +59,6 @@ namespace Resyaku.Infrastructure.Data
             return transaction.GetDbTransaction();
         }
 
-        public DbSet<RestaurantPreferences> RestaurantPreferences { get => Set<RestaurantPreferences>(); }
 
         public DbSet<BookingPreferences> BookingPreferences { get => Set<BookingPreferences>(); }
 

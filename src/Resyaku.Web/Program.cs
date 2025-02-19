@@ -42,7 +42,6 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 builder.Services.Configure<BookingPreferencesOptions>(builder.Configuration.GetRequiredSection("DefaultBookingPreferences"));
-builder.Services.Configure<RestaurantPreferencesOptions>(builder.Configuration.GetRequiredSection("DefaultRestaurantPreferences"));
 
 var app = builder.Build();
 

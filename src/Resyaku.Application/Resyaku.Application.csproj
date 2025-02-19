@@ -21,7 +21,6 @@
   <ItemGroup>
     <Folder Include="Features\Customers\Commands\" />
     <Folder Include="Features\ReservationSettings\Commands\" />
-    <Folder Include="Features\RestaurantSettings\Commands\" />
   </ItemGroup>
 
 </Project>

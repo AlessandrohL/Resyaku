@@ -18,6 +18,12 @@ namespace Resyaku.Infrastructure.Data.Config
             builder.Property(bp => bp.BookingTimeIncrement)
                 .HasColumnType("smallint");
 
+            builder.Property(bp => bp.DailyOpeningTime)
+                .IsRequired();
+
+            builder.Property(bp => bp.DailyClosingTime)
+                .IsRequired();
+
             builder.Property(bp => bp.MaxGuests)
                 .HasColumnType("smallint");
 

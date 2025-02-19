@@ -15,12 +15,8 @@ namespace Resyaku.Application.Features.Bookings.Queries.GetBookingAvailability
                 .BookingPreferences
                 .FirstOrDefaultAsync();
 
-            var restaurantPreferences = await dbContext
-                .RestaurantPreferences
-                .FirstOrDefaultAsync();
-
-            var openingTime = restaurantPreferences!.OpeningTime;
-            var closingTime = restaurantPreferences.ClosingTime;
+            var openingTime = bookingPreferences!.DailyOpeningTime;
+            var closingTime = bookingPreferences.DailyClosingTime;
             var increment = bookingPreferences!.BookingTimeIncrement;
 
             var availableBookingTimes = new List<TimeSpan>();
@@ -33,7 +29,7 @@ namespace Resyaku.Application.Features.Bookings.Queries.GetBookingAvailability
                 openingTime = openingTime.Add(TimeSpan.FromMinutes(increment));
             }
 
-            int maxDuration = (int)(closingTime - restaurantPreferences.OpeningTime).TotalMinutes;
+            int maxDuration = (int)(closingTime - bookingPreferences.DailyOpeningTime).TotalMinutes;
             var availableDurations = Enumerable
                 .Range(1, maxDuration / increment)
                 .Select(i => i * increment)

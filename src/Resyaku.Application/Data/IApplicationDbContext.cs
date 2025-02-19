@@ -7,7 +7,6 @@ namespace Resyaku.Application.Data
 {
     public interface IApplicationDbContext
     {
-        DbSet<RestaurantPreferences> RestaurantPreferences { get; }
         DbSet<BookingPreferences> BookingPreferences { get; }
         DbSet<Customer> Customers { get; }
         DbSet<Booking> Bookings { get; }

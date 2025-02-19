@@ -15,12 +15,13 @@ namespace Resyaku.Infrastructure.Data.Seed
         {
             var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
             var bookingOptions = serviceProvider.GetRequiredService<IOptions<BookingPreferencesOptions>>().Value;
-            var restaurantOptions = serviceProvider.GetRequiredService<IOptions<RestaurantPreferencesOptions>>().Value;
 
             if (!await context.BookingPreferences.AnyAsync(CancellationToken.None))
             {
                 var bookingPreferences = BookingPreferences.Create(
                     bookingTimeIncrement: bookingOptions.BookingTimeIncrement,
+                    dailyOpeningTime: bookingOptions.DailyOpeningTime,
+                    dailyClosingTime: bookingOptions.DailyClosingTime,
                     maxGuests: bookingOptions.MaxGuests,
                     minAdvanceNotice: bookingOptions.MinAdvanceNotice,
                     maxDaysInAdvance: bookingOptions.MaxDaysInAdvance,
@@ -28,18 +29,6 @@ namespace Resyaku.Infrastructure.Data.Seed
                     rowUlid: Ulid.NewUlid().ToString());
 
                 context.BookingPreferences.Add(bookingPreferences);
-            }
-
-            if (!await context.RestaurantPreferences.AnyAsync(CancellationToken.None))
-            {
-                var restaurantPreferences = RestaurantPreferences.Create(
-                    name: restaurantOptions.Name,
-                    description: restaurantOptions.Description ?? string.Empty,
-                    openingTime: restaurantOptions.OpeningTime,
-                    closingTime: restaurantOptions.ClosingTime,
-                    rowUlid: Ulid.NewUlid().ToString());
-
-                context.RestaurantPreferences.Add(restaurantPreferences);
             }
 
             await context.SaveChangesAsync();
