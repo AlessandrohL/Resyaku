@@ -21,6 +21,8 @@
   <ItemGroup>
     <Folder Include="Features\Customers\Commands\" />
     <Folder Include="Features\ReservationSettings\Commands\" />
+    <Folder Include="Features\ReservationSettings\Queries\" />
+    <Folder Include="Interfaces\Services\" />
   </ItemGroup>
 
 </Project>

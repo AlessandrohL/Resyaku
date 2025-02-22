@@ -1,19 +1,16 @@
 ﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
-using Resyaku.Application.Data;
+using Resyaku.Application.Features.ReservationSettings.Services;
 
 namespace Resyaku.Application.Features.Bookings.Queries.GetBookingAvailability
 {
-    public sealed class GetBookingAvailabilityQueryHandler(IApplicationDbContext dbContext)
+    public sealed class GetBookingAvailabilityQueryHandler(IBookingSettingsService bookingSettingsService)
         : IRequestHandler<GetBookingAvailabilityQuery, BookingAvailabilityDto>
     {
         public async Task<BookingAvailabilityDto> Handle(
             GetBookingAvailabilityQuery request, 
             CancellationToken cancellationToken)
         {
-            var bookingPreferences = await dbContext
-                .BookingPreferences
-                .FirstOrDefaultAsync();
+            var bookingPreferences = await bookingSettingsService.GetBookingPreferencesAsync(cancellationToken);
 
             var openingTime = bookingPreferences!.DailyOpeningTime;
             var closingTime = bookingPreferences.DailyClosingTime;

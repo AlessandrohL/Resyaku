@@ -1,4 +1,4 @@
-﻿namespace Resyaku.Application.Features.ReservationSettings.Queries.GetBookingPreferences
+﻿namespace Resyaku.Application.Features.ReservationSettings.Services.DTOs
 {
     public class GetBookingPreferencesDto
     {

@@ -2,8 +2,10 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Resyaku.Application.Data;
+using Resyaku.Application.Features.ReservationSettings.Services;
 using Resyaku.Infrastructure.Data;
 using Resyaku.Infrastructure.Data.Interceptors;
+using Resyaku.Infrastructure.Services;
 
 namespace Resyaku.Infrastructure
 {
@@ -31,6 +33,10 @@ namespace Resyaku.Infrastructure
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
                 Application.AssemblyReference.Assembly,
                 AssemblyReference.Assembly));
+
+            services.AddMemoryCache();
+
+            services.AddScoped<IBookingSettingsService, BookingSettingService>();
 
             return services;
         }
