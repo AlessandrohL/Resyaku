@@ -23,13 +23,11 @@ namespace Resyaku.Infrastructure.Data.Config
 
             builder
                 .Property(p => p.MinCapacity)
-                .IsRequired()
-                .HasColumnType("smallint");
-            
+                .IsRequired();
+
             builder
                 .Property(p => p.MaxCapacity)
-                .IsRequired()
-                .HasColumnType("smallint");
+                .IsRequired();
 
             builder
                 .Property(p => p.IsActive)
