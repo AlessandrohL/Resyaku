@@ -1,4 +1,4 @@
-﻿namespace Resyaku.Application.Features.Customers.Queries.GetCustomerByDni
+﻿namespace Resyaku.Application.DTOs.Customers
 {
     public class GetCustomerByDniDto
     {

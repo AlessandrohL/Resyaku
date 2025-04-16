@@ -1,6 +1,6 @@
 ﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
-using Resyaku.Application.Data;
+using Resyaku.Application.Data.Repositories;
+using Resyaku.Application.Data.UnitOfWorks;
 using Resyaku.Application.Errors;
 using Resyaku.Domain.Entities;
 using Resyaku.Domain.Primitives;
@@ -8,16 +8,14 @@ using Resyaku.Domain.Primitives;
 namespace Resyaku.Application.Features.Tables.Commands.CreateTable
 {
     public sealed class CreateTableCommandHandler(
-        IApplicationDbContext dbContext)
+        IServiceAreaRepository serviceAreaRepository,
+        ITableRepository tableRepository,
+        IUnitOfWork unitOfWork)
         : IRequestHandler<CreateTableCommand, Result>
     {
         public async Task<Result> Handle(CreateTableCommand request, CancellationToken cancellationToken)
         {
-            var serviceArea = await dbContext
-                .ServiceAreas
-                .FirstOrDefaultAsync(sa => sa.ServiceAreaId == request.ServiceAreaId, CancellationToken.None);
-
-            if (serviceArea is null)
+            if (!await serviceAreaRepository.ExistsByIdAsync(request.ServiceAreaId))
             {
                 return Result.Failure(TableErrors.NotFound);
             }
@@ -26,13 +24,12 @@ namespace Resyaku.Application.Features.Tables.Commands.CreateTable
                 name: request.Name,
                 minCapacity: request.MinCapacity,
                 maxCapacity: request.MaxCapacity,
-                serviceArea: serviceArea,
+                serviceAreaId: request.ServiceAreaId,
                 isActive: request.IsActive,
                 rowUlid: Ulid.NewUlid().ToString());
 
-            dbContext.Tables.Add(newTable);
-
-            await dbContext.SaveChangesAsync(CancellationToken.None);
+            tableRepository.Add(newTable);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result.Success();
         }

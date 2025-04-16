@@ -1,30 +1,27 @@
 ﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
-using Resyaku.Application.Data;
+using Resyaku.Application.Data.Repositories;
+using Resyaku.Application.Data.UnitOfWorks;
 using Resyaku.Application.Errors;
 using Resyaku.Domain.Primitives;
 
 namespace Resyaku.Application.Features.Tables.Commands.UpdateTable
 {
-    public sealed class UpdateTableCommandHandler(IApplicationDbContext dbContext)
+    public sealed class UpdateTableCommandHandler(
+        ITableRepository tableRepository,
+        IServiceAreaRepository serviceAreaRepository,
+        IUnitOfWork unitOfWork)
         : IRequestHandler<UpdateTableCommand, Result>
     {
         public async Task<Result> Handle(UpdateTableCommand request, CancellationToken cancellationToken)
         {
-            var table = await dbContext
-                .Tables
-                .FirstOrDefaultAsync(t => t.TableId == request.TableId, CancellationToken.None);
+            var table = await tableRepository.GetByIdAsync(request.TableId);
 
             if (table is null)
             {
                 return Result.Failure(TableErrors.NotFound);
             }
 
-            bool serviceAreaExists = await dbContext
-                .ServiceAreas
-                .AnyAsync(sa => sa.ServiceAreaId == request.ServiceAreaId, CancellationToken.None);
-
-            if (!serviceAreaExists)
+            if (!await serviceAreaRepository.ExistsByIdAsync(request.ServiceAreaId))
             {
                 return Result.Failure(ServiceAreaErrors.NotFound);
             }
@@ -36,7 +33,7 @@ namespace Resyaku.Application.Features.Tables.Commands.UpdateTable
             table.ServiceAreaId = request.ServiceAreaId;
             table.ModifiedOnUtc = DateTime.UtcNow;
 
-            await dbContext.SaveChangesAsync(CancellationToken.None);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result.Success();
         }

@@ -2,9 +2,13 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Resyaku.Application.Data;
+using Resyaku.Application.Data.Repositories;
+using Resyaku.Application.Data.UnitOfWorks;
 using Resyaku.Application.Features.ReservationSettings.Services;
 using Resyaku.Infrastructure.Data;
 using Resyaku.Infrastructure.Data.Interceptors;
+using Resyaku.Infrastructure.Data.Repositories;
+using Resyaku.Infrastructure.Data.UnitOfWorks;
 using Resyaku.Infrastructure.Services;
 
 namespace Resyaku.Infrastructure
@@ -27,8 +31,12 @@ namespace Resyaku.Infrastructure
                     sp.GetRequiredService<SoftDeleteInterceptor>());
             });
 
-            services.AddScoped<IApplicationDbContext>(sp =>
-                sp.GetRequiredService<ApplicationDbContext>());
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IBookingRepository, BookingRepository>();
+            services.AddScoped<ICustomerRepository, CustomerRepository>();
+            services.AddScoped<IServiceAreaRepository, ServiceAreaRepository>();
+            services.AddScoped<ITableRepository, TableRepository>();
+            services.AddScoped<IBookingPreferencesRepository, BookingPreferencesRepository>();
 
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
                 Application.AssemblyReference.Assembly,

@@ -1,4 +1,4 @@
-﻿using Resyaku.Application.Features.Bookings.Queries.GetAllBookings;
+﻿using Resyaku.Application.DTOs.Bookings;
 using Resyaku.Application.Features.Bookings.Queries.GetBookings;
 using Resyaku.Domain.Primitives;
 

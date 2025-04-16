@@ -25,7 +25,7 @@ namespace Resyaku.Domain.Entities
             string name,
             int minCapacity,
             int maxCapacity,
-            ServiceArea serviceArea,
+            int serviceAreaId,
             bool isActive,
             string rowUlid)
         {
@@ -34,8 +34,7 @@ namespace Resyaku.Domain.Entities
                 Name = name,
                 MinCapacity = minCapacity,
                 MaxCapacity = maxCapacity,
-                ServiceAreaId = serviceArea.ServiceAreaId,
-                ServiceArea = serviceArea,
+                ServiceAreaId = serviceAreaId,
                 IsActive = isActive,
                 RowUlid = rowUlid,
                 CreatedOnUtc = DateTime.UtcNow

@@ -1,6 +1,6 @@
 ﻿using Resyaku.Domain.Enums;
 
-namespace Resyaku.Application.Features.Bookings.Queries.GetAllBookings
+namespace Resyaku.Application.DTOs.Bookings
 {
     public class GetAllBookingsDto
     {

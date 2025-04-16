@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Resyaku.Application.DTOs.Bookings;
 using Resyaku.Application.Features.Bookings.Queries.GetBookings;
 using Resyaku.Domain.Primitives;
 

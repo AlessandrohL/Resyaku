@@ -1,29 +1,29 @@
 ﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
-using Resyaku.Application.Data;
+using Resyaku.Application.Data.Repositories;
+using Resyaku.Application.Data.UnitOfWorks;
 using Resyaku.Application.Errors;
 using Resyaku.Domain.Primitives;
 
 namespace Resyaku.Application.Features.ServiceAreas.Commands.UpdateServiceArea
 {
-    public sealed class UpdateServiceAreaCommandHandler(IApplicationDbContext dbContext)
+    public sealed class UpdateServiceAreaCommandHandler(
+        IServiceAreaRepository serviceAreaRepository,
+        IUnitOfWork unitOfWork)
         : IRequestHandler<UpdateServiceAreaCommand, Result>
     {
         public async Task<Result> Handle(UpdateServiceAreaCommand request, CancellationToken cancellationToken)
         {
-            var serviceArea = await dbContext
-                .ServiceAreas
-                .FirstOrDefaultAsync(sa => sa.ServiceAreaId == request.ServiceAreaId, CancellationToken.None);
+            var existingServiceArea = await serviceAreaRepository.GetByIdAsync(request.ServiceAreaId);
 
-            if (serviceArea is null)
+            if (existingServiceArea is null)
             {
                 return Result.Failure(ServiceAreaErrors.NotFound);
             }
 
-            serviceArea.Name = request.Name;
-            serviceArea.ModifiedOnUtc = DateTime.UtcNow;
+            existingServiceArea.Name = request.Name;
+            existingServiceArea.ModifiedOnUtc = DateTime.UtcNow;
 
-            await dbContext.SaveChangesAsync(CancellationToken.None);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result.Success();
         }

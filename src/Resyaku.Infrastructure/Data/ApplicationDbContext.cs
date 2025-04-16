@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
-using Resyaku.Application.Data;
 using Resyaku.Domain.Audit;
 using Resyaku.Domain.Entities;
 using Resyaku.Infrastructure.Authentication.Identity;
@@ -20,8 +19,7 @@ namespace Resyaku.Infrastructure.Data
             IdentityUserLogin<Guid>,
             IdentityRoleClaim<Guid>,
             IdentityUserToken<Guid>
-            >(options),
-        IApplicationDbContext
+            >(options)
     {
         protected override void OnModelCreating(ModelBuilder builder)
         {

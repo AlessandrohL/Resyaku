@@ -1,20 +1,22 @@
-﻿using Resyaku.Domain.Primitives;
-using Resyaku.Application.Data;
-using MediatR;
+﻿using MediatR;
+using Resyaku.Application.Data.Repositories;
+using Resyaku.Application.Data.UnitOfWorks;
+using Resyaku.Domain.Entities;
+using Resyaku.Domain.Primitives;
 
 namespace Resyaku.Application.Features.ServiceAreas.Commands.CreateServiceArea
 {
     public sealed class CreateServiceAreaCommandHandler(
-        IApplicationDbContext dbContext)
+        IServiceAreaRepository serviceAreaRepository,
+        IUnitOfWork unitOfWork)
         : IRequestHandler<CreateServiceAreaCommand, Result>
     {
         public async Task<Result> Handle(CreateServiceAreaCommand request, CancellationToken cancellationToken)
         {
-            var newServiceArea = Domain.Entities.ServiceArea.Create(request.Name, Ulid.NewUlid().ToString());
+            var newServiceArea = ServiceArea.Create(request.Name, Ulid.NewUlid().ToString());
 
-            dbContext.ServiceAreas.Add(newServiceArea);
-
-            await dbContext.SaveChangesAsync(CancellationToken.None);
+            serviceAreaRepository.Add(newServiceArea);
+            await unitOfWork.SaveChangesAsync(CancellationToken.None);
 
             return Result.Success();
         }
