@@ -14,8 +14,9 @@
                 <input 
                 asp-for="BookingDate" 
                 type="date" 
-                value="@DateTime.Now.ToString("yyyy-MM-dd")"
-                min="@DateTime.Now.ToString("yyyy-MM-dd")"
+                value="@Model.BookingAvailability!.MinBookingDate.ToString("yyyy-MM-dd")"
+                min="@Model.BookingAvailability!.MinBookingDate.ToString("yyyy-MM-dd")"
+                max="@Model.BookingAvailability!.MaxBookingDate.ToString("yyyy-MM-dd")"
                 class="form-control @ViewData.ErrorClass("BookingDate", "is-invalid")"
                 required />
                 <span asp-validation-for="BookingDate" class="invalid-feedback"></span>
@@ -55,16 +56,16 @@
             <div class="form-group col-md-4 col-lg-2 @ViewData.ErrorClass("GuestCount", "has-danger")">
                 <label for="GuestCount" class="mb-1 form-label">Cant. comensales:</label>
                 <select 
-                    asp-for="GuestCount"
+                    asp-for="PartySize"
                     class="form-select @ViewData.ErrorClass("GuestCount", "is-invalid")"
                     required
                 >
-                    @foreach (var guest in Model.BookingAvailability!.AvailableGuestCounts)
+                    @foreach (var guest in Model.BookingAvailability!.AvailablePartySize)
                     {
                         <option value="@guest">@guest</option>
                     }
                 </select>
-                <span asp-validation-for="GuestCount" class="invalid-feedback"></span>
+                <span asp-validation-for="PartySize" class="invalid-feedback"></span>
             </div>
             <div class="form-group col-md-4 col-lg-2 @ViewData.ErrorClass("BookingStatus", "has-danger")">
                 <label for="BookingStatus" class="mb-1 form-label">Estado:</label>

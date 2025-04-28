@@ -7,7 +7,6 @@
 </div>
 
 <form asp-area="Admin" asp-controller="ServiceArea" asp-action="UpdateServiceArea" method="post">
-    <input asp-for="@Model.ServiceAreaId" value="@Model.ServiceAreaId" type="hidden"/>
     <div class="row mb-3">
         <div class="col-6 form-group @ViewData.ErrorClass("Name", "has-danger")">
             <label for="firstname" class="mb-2">Nombre:</label>

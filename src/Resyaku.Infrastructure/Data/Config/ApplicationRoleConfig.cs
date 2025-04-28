@@ -19,6 +19,14 @@ namespace Resyaku.Infrastructure.Data.Config
                 .Property(p => p.NormalizedName)
                 .IsRequired()
                 .HasMaxLength(50);
+
+            builder
+                .Property(p => p.RowGuid)
+                .IsRequired();
+
+            builder
+                .HasIndex(p => p.RowGuid)
+                .IsUnique();
         }
     }
 }

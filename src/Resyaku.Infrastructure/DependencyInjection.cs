@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Resyaku.Application.Abstractions.Services;
 using Resyaku.Application.Data;
 using Resyaku.Application.Data.Repositories;
 using Resyaku.Application.Data.UnitOfWorks;
-using Resyaku.Application.Features.ReservationSettings.Services;
 using Resyaku.Infrastructure.Data;
 using Resyaku.Infrastructure.Data.Interceptors;
 using Resyaku.Infrastructure.Data.Repositories;
@@ -20,14 +20,16 @@ namespace Resyaku.Infrastructure
             IConfiguration configuration)
         {
             services.AddSingleton<SoftDeleteInterceptor>();
+            services.AddSingleton<AuditableEntityInterceptor>();
 
             services.AddDbContext<ApplicationDbContext>((sp, options) =>
             {
-                string connectionStr = configuration.GetConnectionString("DevConnection")
+                string connectionStr = configuration.GetConnectionString("Database")
                     ?? throw new Exception($"{nameof(connectionStr)} Connection string is null.");
 
                 options.UseSqlServer(connectionStr);
                 options.AddInterceptors(
+                    sp.GetRequiredService<AuditableEntityInterceptor>(),
                     sp.GetRequiredService<SoftDeleteInterceptor>());
             });
 
@@ -36,7 +38,7 @@ namespace Resyaku.Infrastructure
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<IServiceAreaRepository, ServiceAreaRepository>();
             services.AddScoped<ITableRepository, TableRepository>();
-            services.AddScoped<IBookingPreferencesRepository, BookingPreferencesRepository>();
+            services.AddScoped<IBookingSettingsRepository, BookingPreferencesRepository>();
 
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
                 Application.AssemblyReference.Assembly,
@@ -44,7 +46,7 @@ namespace Resyaku.Infrastructure
 
             services.AddMemoryCache();
 
-            services.AddScoped<IBookingSettingsService, BookingSettingService>();
+            services.AddScoped<IBookingSettingsService, BookingSettingsService>();
 
             return services;
         }

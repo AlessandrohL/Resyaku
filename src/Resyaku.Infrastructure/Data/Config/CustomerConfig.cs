@@ -13,18 +13,14 @@ namespace Resyaku.Infrastructure.Data.Config
             builder.HasKey(p => p.CustomerId);
 
             builder
-                .Property(p => p.CustomerId)
-                .IsRequired();
-
-            builder
                 .Property(p => p.Name)
                 .IsRequired()
-                .HasMaxLength(40);
+                .HasMaxLength(50);
 
             builder
                 .Property(p => p.Lastname)
                 .IsRequired()
-                .HasMaxLength(40);
+                .HasMaxLength(50);
 
             builder
                 .HasIndex(p => new { p.Name, p.Lastname });
@@ -61,12 +57,12 @@ namespace Resyaku.Infrastructure.Data.Config
                 .IsRequired();
 
             builder
-                .Property(p => p.CreatedOnUtc)
-                .IsRequired()
-                .HasDefaultValueSql("GETUTCDATE()");
+                .Property(p => p.CreatedAt)
+                .HasDefaultValueSql("GETUTCDATE()")
+                .IsRequired();
 
             builder
-                .Property(p => p.ModifiedOnUtc)
+                .Property(p => p.UpdatedAt)
                 .IsRequired(false);
 
             builder
@@ -74,13 +70,11 @@ namespace Resyaku.Infrastructure.Data.Config
                 .IsRequired();
 
             builder
-                .Property(p => p.RowUlid)
-                .IsRequired()
-                .HasMaxLength(26)
-                .IsFixedLength();
+                .Property(p => p.RowGuid)
+                .IsRequired();
 
             builder
-                .HasIndex(p => p.RowUlid)
+                .HasIndex(p => p.RowGuid)
                 .IsUnique();
         }
     }

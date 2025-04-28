@@ -58,9 +58,9 @@ namespace Resyaku.Web.Validation.Users
                     .WithMessage("La contraseña debe tener al menos 8 caracteres, una letra minúscula, una letra mayúscula y un dígito.");
             });
 
-            RuleFor(p => p.Roles)
+            RuleFor(p => p.SelectedRoles)
                 .NotEmpty()
-                    .WithMessage("Debe seleccionar al menos un rol para el usuario.");
+                    .WithMessage("Debe seleccionar al menos un rol.");
         }
     }
 }

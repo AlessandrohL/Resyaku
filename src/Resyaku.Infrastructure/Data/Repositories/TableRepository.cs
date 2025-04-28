@@ -1,9 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Resyaku.Application.Data.Repositories;
+using Resyaku.Application.DTOs.ServiceAreas;
+using Resyaku.Application.DTOs.Tables;
 using Resyaku.Application.Features.Tables.Queries.GetAllTables;
-using Resyaku.Application.Features.Tables.Queries.GetAvailableTables;
-using Resyaku.Application.Features.Tables.Queries.GetTableById;
-using Resyaku.Application.Mapper;
 using Resyaku.Domain.Entities;
 using Resyaku.Domain.Enums;
 using Resyaku.Domain.Extensions;
@@ -13,12 +12,11 @@ namespace Resyaku.Infrastructure.Data.Repositories
 {
     public sealed class TableRepository(ApplicationDbContext dbContext) : ITableRepository
     {
-        public async Task<CollectionResult<GetAllTablesDto>> GetAllTablesAsync(
-            GetAllTablesQueryParameters queryParams)
+        public async Task<CollectionResult<TableSummaryDto>> GetAllTablesAsync(
+            GetAllTablesQueryParams queryParams)
         {
             var query = dbContext.Tables
                 .AsNoTracking()
-                //.Include(t => t.ServiceArea)
                 .WhereIf(!string.IsNullOrWhiteSpace(queryParams.SearchTerm),
                     t => EF.Functions.Like(t.Name, $"%{queryParams.SearchTerm}%"))
                 .WhereIf(queryParams.ServiceAreaId != 0,
@@ -28,43 +26,52 @@ namespace Resyaku.Infrastructure.Data.Repositories
             var tables = await query
                 .ApplyOrdering(queryParams)
                 .ApplyPagination(queryParams)
-                .Select(t => t.ToAllTablesDto())
+                .Select(t => new TableSummaryDto(
+                    t.TableId,
+                    t.Name,
+                    t.MinCapacity,
+                    t.MaxCapacity,
+                    new ServiceAreaSummaryDto(t.ServiceAreaId, t.ServiceArea.Name),
+                    t.IsActive))
                 .ToListAsync();
 
-            return new CollectionResult<GetAllTablesDto>(tables, count);
+            return new CollectionResult<TableSummaryDto>(tables, count);
         }
 
-        public async Task<IEnumerable<GetAvailableTablesDto>> GetAvailableTablesAsync(
-            DateTime bookingDate, 
-            TimeSpan bookingStartTime, 
-            TimeSpan bookingEndTime)
+        public async Task<IEnumerable<AvailableTableDto>> GetAvailableTablesAsync(
+            DateOnly date, 
+            TimeOnly startTime, 
+            TimeOnly endTime)
         {
             return await dbContext.Tables
                 .AsNoTracking()
-                .Where(t => t.Bookings.Any(b =>
+                .Where(t => !t.Bookings.Any(b =>
                     b.Status != BookingStatus.Cancelled &&
-                    b.BookingDate == bookingDate &&
-                    b.BookingTime < bookingEndTime &&
-                    b.EndTime.TimeOfDay > bookingStartTime))
-                .Select(t => t.ToAvailableTablesDto())
+                    b.BookingDate == date &&
+                    b.StartTime < endTime &&
+                    b.EndTime > startTime))
+                .Select(t => new AvailableTableDto(
+                    t.TableId,
+                    t.Name,
+                    t.MinCapacity,
+                    t.MaxCapacity,
+                    t.ServiceArea.Name))
                 .ToListAsync();
         }
 
         public async Task<bool> AreTablesAvailableAsync(
             IEnumerable<int> tableIds, 
-            DateTime bookingDate, 
-            TimeSpan startTime, 
-            int duration)
+            DateOnly date, 
+            TimeOnly startTime, 
+            TimeOnly endTime)
         {
-            var bookingEndDateTime = bookingDate.Add(startTime).AddMinutes(duration);
-
             return await dbContext.Tables
                 .Where(t => tableIds.Contains(t.TableId))
                 .AllAsync(t => !t.Bookings.Any(b =>
                     b.Status != BookingStatus.Cancelled &&
-                    b.BookingDate == bookingDate &&
-                    b.BookingTime < bookingEndDateTime.TimeOfDay &&
-                    b.EndTime.TimeOfDay > startTime));
+                    b.BookingDate == date &&
+                    b.StartTime < endTime &&
+                    b.EndTime > startTime));
         }
 
         public async Task<Table?> GetByIdAsync(int tableId, bool trackChanges = true)

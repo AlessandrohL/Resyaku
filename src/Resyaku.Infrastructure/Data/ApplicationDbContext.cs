@@ -1,8 +1,6 @@
-﻿using System.Data.Common;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 using Resyaku.Domain.Audit;
 using Resyaku.Domain.Entities;
 using Resyaku.Infrastructure.Authentication.Identity;
@@ -50,15 +48,7 @@ namespace Resyaku.Infrastructure.Data
             builder.Entity<IdentityRoleClaim<Guid>>(entity => { entity.ToTable("ApplicationRoleClaim"); });
         }
 
-        public async Task<DbTransaction> BeginTransactionAsync()
-        {
-            var transaction = await Database.BeginTransactionAsync();
-
-            return transaction.GetDbTransaction();
-        }
-
-
-        public DbSet<BookingPreferences> BookingPreferences { get => Set<BookingPreferences>(); }
+        public DbSet<BookingSettings> BookingPreferences { get => Set<BookingSettings>(); }
 
         public DbSet<Customer> Customers { get => Set<Customer>(); }
 

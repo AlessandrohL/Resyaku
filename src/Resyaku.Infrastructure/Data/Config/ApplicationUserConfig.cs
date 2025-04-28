@@ -51,10 +51,12 @@ namespace Resyaku.Infrastructure.Data.Config
                 .IsRequired();
 
             builder
-                .Property(p => p.RowUlid)
-                .IsRequired()
-                .HasMaxLength(26)
-                .IsFixedLength();
+                .Property(p => p.RowGuid)
+                .IsRequired();
+
+            builder
+                .HasIndex(p => p.RowGuid)
+                .IsUnique();
         }
     }
 }

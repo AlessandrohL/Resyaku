@@ -4,10 +4,15 @@ namespace Resyaku.Infrastructure.Errors
 {
     public static class UserErrors
     {
-        public static readonly Error UserAlreadyExists = new(
-          "User.AlreadyExists",
+        public static readonly Error EmailAlreadyInUse = new(
+          "User.EmailAlreadyInUse",
           ErrorType.Problem,
-          "El correo electrónico proporcionado ya está en uso.");
+          "El correo electrónico ya está en uso.");
+
+        public static readonly Error UsernameAlreadyInUse = new(
+          "User.UsernameAlreadyInUse",
+          ErrorType.Problem,
+          "El nombre de usuario ya está en uso.");
 
         public static readonly Error NotFound = new(
             "User.NotFound",

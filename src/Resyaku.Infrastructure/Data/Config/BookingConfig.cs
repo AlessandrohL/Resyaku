@@ -33,23 +33,20 @@ namespace Resyaku.Infrastructure.Data.Config
                 .IsDescending();
 
             builder
-                .Property(p => p.BookingTime)
+                .Property(p => p.StartTime)
                 .IsRequired();
 
-
             builder
-                .Property(p => p.Duration)
-                .IsRequired()
-                .HasColumnType("smallint");
+                .Property(p => p.DurationMinutes)
+                .IsRequired();
 
             builder
                 .Property(p => p.EndTime)
                 .IsRequired();
 
             builder
-                .Property(p => p.GuestCount)
-                .IsRequired()
-                .HasColumnType("tinyint");
+                .Property(p => p.PartySize)
+                .IsRequired();
 
             builder
                 .Property(p => p.Status)
@@ -81,20 +78,16 @@ namespace Resyaku.Infrastructure.Data.Config
                 .IsRequired();
 
             builder
-                .Property(p => p.IsWalking)
+                .Property(p => p.CreatedAt)
+                .HasDefaultValueSql("GETUTCDATE()")
                 .IsRequired();
 
             builder
-                .Property(p => p.CreatedOnUtc)
-                .IsRequired()
-                .HasDefaultValueSql("GETUTCDATE()");
-
-            builder
-                .HasIndex(p => p.CreatedOnUtc)
+                .HasIndex(p => p.CreatedAt)
                 .IsDescending();
 
             builder
-                .Property(p => p.ModifiedOnUtc)
+                .Property(p => p.UpdatedAt)
                 .IsRequired(false);
 
             builder
@@ -106,13 +99,11 @@ namespace Resyaku.Infrastructure.Data.Config
                 .IsRequired(false);
 
             builder
-                .Property(p => p.RowUlid)
-                .IsRequired()
-                .HasMaxLength(26)
-                .IsFixedLength();
+                .Property(p => p.RowGuid)
+                .IsRequired();
 
             builder
-                .HasIndex(p => p.RowUlid)
+                .HasIndex(p => p.RowGuid)
                 .IsUnique();
 
             builder

@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Resyaku.Application.Providers;
+using Resyaku.Domain.Abstractions;
 
 namespace Resyaku.Application
 {
@@ -6,6 +8,8 @@ namespace Resyaku.Application
     {
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
+            services.AddScoped<IBookingReferenceProvider, BookingReferenceProvider>();
+
             return services;
         }
     }

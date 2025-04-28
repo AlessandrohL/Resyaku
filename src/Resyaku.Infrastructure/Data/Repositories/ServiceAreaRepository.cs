@@ -1,18 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Resyaku.Application.Data.Repositories;
-using Resyaku.Application.Features.ServiceAreas.Queries.GetAllServiceAreas;
-using Resyaku.Application.Mapper;
+using Resyaku.Application.DTOs.ServiceAreas;
 using Resyaku.Domain.Entities;
 
 namespace Resyaku.Infrastructure.Data.Repositories
 {
     public sealed class ServiceAreaRepository(ApplicationDbContext dbContext) : IServiceAreaRepository
     {
-        public async Task<List<GetAllServiceAreasDto>> GetAllServiceAreasAsync()
+        public async Task<List<ServiceAreaSummaryDto>> GetAllServiceAreasAsync()
         {
             return await dbContext.ServiceAreas
                 .AsNoTracking()
-                .Select(sa => sa.ToAllServiceAreaDto())
+                .Select(sa => new ServiceAreaSummaryDto(sa.ServiceAreaId, sa.Name))
                 .ToListAsync();
         }
 

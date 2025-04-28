@@ -3,68 +3,52 @@ using Resyaku.Domain.Primitives;
 
 namespace Resyaku.Domain.Entities
 {
-    public sealed class Booking : IAuditableEntity, ISoftDeletable
+    public sealed class Booking : AuditableEntity, ISoftDeletable
     {
-        private Booking() { }
-
         public int BookingId { get; set; }
         public int CustomerId { get; set; }
         public string Reference { get; set; } = null!;
-        public DateTime BookingDate { get; set; }
-        public TimeSpan BookingTime { get; set; }
-        public int Duration { get; set; }
-        public DateTime EndTime { get; private set; }
-        public int GuestCount { get; set; }
+        public DateOnly BookingDate { get; set; }
+        public TimeOnly StartTime { get; set; }
+        public int DurationMinutes { get; set; }
+        public TimeOnly EndTime { get; set; }
+        public int PartySize { get; set; }
         public BookingStatus Status { get; set; }
         public string? PrivateComment { get; set; }
         public string? PublicComment { get; set; }
-        public Customer Customer { get; private set; } = null!;
+        public Customer Customer { get; set; } = null!;
         public ICollection<BookingTable> BookingTables { get; } = [];
         public ICollection<Table> Tables { get; } = [];
         public string ContactPhone { get; set; } = null!;
         public bool IsConfirmed { get; set; }
-        public bool IsWalking { get; set; }
-        public DateTime CreatedOnUtc { get; init; }
-        public DateTime? ModifiedOnUtc { get; set; }
         public bool IsDeleted { get; set; }
         public DateTime? DeletedAt { get; set; }
-        public string RowUlid { get; init; } = null!;
 
-        public static Booking Create(
-            string bookingReferenceCode,
+        public Booking() { }
+
+        public Booking(
+            string reference,
             int customerId,
-            DateTime bookingDate,
-            TimeSpan bookingStartTime,
+            DateOnly bookingDate,
+            TimeOnly bookingStartTime,
             int durationInMinutes,
-            int guestCount,
+            int partySize,
             BookingStatus bookingStatus,
             string? privateComment,
             string? publicComment,
-            string contactPhone,
-            bool isWalking,
-            string rowUlid)
+            string contactPhone)
         {
-            Booking booking = new()
-            {
-                Reference = bookingReferenceCode,
-                CustomerId = customerId,
-                BookingDate = bookingDate,
-                BookingTime = bookingStartTime,
-                Duration = durationInMinutes,
-                EndTime = bookingDate
-                    .Add(bookingStartTime)
-                    .AddMinutes(durationInMinutes),
-                GuestCount = guestCount,
-                Status = bookingStatus,
-                PrivateComment = privateComment,
-                PublicComment = publicComment,
-                ContactPhone = contactPhone,
-                IsWalking = isWalking,
-                CreatedOnUtc = DateTime.UtcNow,
-                RowUlid = rowUlid
-            };
-
-            return booking;
+            Reference = reference;
+            CustomerId = customerId;
+            BookingDate = bookingDate;
+            StartTime = bookingStartTime;
+            DurationMinutes = durationInMinutes;
+            EndTime = bookingStartTime.AddMinutes(durationInMinutes);
+            PartySize = partySize;
+            Status = bookingStatus;
+            PrivateComment = privateComment;
+            PublicComment = publicComment;
+            ContactPhone = contactPhone;
         }
     }
 }

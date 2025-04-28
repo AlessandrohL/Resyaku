@@ -2,27 +2,19 @@
 
 namespace Resyaku.Domain.Entities
 {
-    public sealed class ServiceArea : IAuditableEntity, ISoftDeletable
+    public sealed class ServiceArea : AuditableEntity, ISoftDeletable
     {
         public int ServiceAreaId { get; set; }
         public string Name { get; set; } = null!;
         public ICollection<Table> Tables { get; set; } = [];
-        public DateTime CreatedOnUtc { get; init; }
-        public DateTime? ModifiedOnUtc { get; set; }
         public bool IsDeleted { get; set; }
         public DateTime? DeletedAt { get; set; }
-        public string RowUlid { get; init; } = null!;
 
-        private ServiceArea() { }
+        public ServiceArea() { }
 
-        public static ServiceArea Create(string name, string rowUlid)
+        public ServiceArea(string name)
         {
-            return new ServiceArea
-            {
-                Name = name,
-                RowUlid = rowUlid,
-                CreatedOnUtc = DateTime.UtcNow
-            };
+            Name = name;
         }
     }
 }

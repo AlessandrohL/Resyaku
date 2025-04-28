@@ -3,12 +3,10 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Resyaku.Domain.Primitives;
 using Resyaku.Infrastructure.Authentication.Features.Roles.Queries.GetAllRoles;
-using Resyaku.Infrastructure.Authentication.Features.Users.Commands.CreateUser;
-using Resyaku.Infrastructure.Authentication.Features.Users.Commands.UpdateUser;
 using Resyaku.Infrastructure.Authentication.Features.Users.Queries.GetAllUsers;
 using Resyaku.Infrastructure.Authentication.Features.Users.Queries.GetUserById;
 using Resyaku.Web.Extensions;
-using Resyaku.Web.Mappers;
+using Resyaku.Web.Mapper;
 using Resyaku.Web.ViewModels.Users;
 
 namespace Resyaku.Web.Controllers
@@ -16,57 +14,58 @@ namespace Resyaku.Web.Controllers
     [Route("users")]
     public sealed class UserController(
         ISender sender,
-        IValidator<CreateUserCommand> createUserValidator,
-        IValidator<GetUserByIdQuery> getUserValidator,
+        IValidator<CreateUserViewModel> createUserValidator,
         IValidator<UpdateUserViewModel> updateUserValidator)
         : Controller
     {
+        [HttpGet]
         public async Task<IActionResult> Index(
             [FromQuery] GetAllUsersQueryParameters queryParameters,
             CancellationToken cancellationToken)
         {
             var pagedUsers = await sender.Send(new GetAllUsersQuery(queryParameters), cancellationToken);
             var usersViewModel = new GetAllUsersViewModel(queryParameters, pagedUsers);
+
             return View(usersViewModel);
         }
 
-        [Route("create")]
+        [HttpGet("create")]
         public async Task<IActionResult> CreateUser(CancellationToken cancellationToken)
         {
             var roles = await sender.Send(new GetAllRolesQuery(), cancellationToken);
-            ViewBag.Roles = roles.Select(r => r.Name);
+            var viewModel = new CreateUserViewModel(roles);
 
-            return View();
+            return View(viewModel);
         }
 
-        [HttpPost]
+        [HttpPost("create")]
         [ValidateAntiForgeryToken]
-        [Route("create")]
         public async Task<IActionResult> CreateUser(
-            CreateUserCommand command,
+            CreateUserViewModel viewModel,
             CancellationToken cancellationToken)
         {
-            var validationResult = await createUserValidator.ValidateAsync(command, cancellationToken);
+            var validationResult = await createUserValidator.ValidateAsync(viewModel, cancellationToken);
 
             if (!validationResult.IsValid)
             {
                 validationResult.AddToModelState(ModelState);
-                var roles = await sender.Send(new GetAllRolesQuery(), cancellationToken);
-                ViewBag.Roles = roles.Select(r => r.Name);
 
-                return View(command);
+                var roles = await sender.Send(new GetAllRolesQuery(), cancellationToken);
+                viewModel.AvailableRoles = roles;
+
+                return View(viewModel);
             }
 
-            var creationResult = await sender.Send(command, cancellationToken);
+            Result creationResult = await sender.Send(viewModel.ToCreateUserCommand(), cancellationToken);
 
             if (creationResult.IsFailure)
             {
                 ViewBag.UserCreationError = creationResult.Error.Description;
-
+                
                 var roles = await sender.Send(new GetAllRolesQuery(), cancellationToken);
-                ViewBag.Roles = roles.Select(r => r.Name);
+                viewModel.AvailableRoles = roles;
 
-                return View(command);
+                return View(viewModel);
             }
 
             TempData["User.Created"] = "Usuario registrado con éxito.";
@@ -74,36 +73,27 @@ namespace Resyaku.Web.Controllers
             return RedirectToAction("Index");
         }
 
-        [HttpGet]
-        [Route("{userId}/update")]
+        [HttpGet("{userId}/update")]
         public async Task<IActionResult> UpdateUser(string userId, CancellationToken cancellationToken)
         {
-            var query = new GetUserByIdQuery(userId);
-            var validationResult = await getUserValidator.ValidateAsync(query, cancellationToken);
+            if (!Guid.TryParse(userId, out _)) return NotFound();
 
-            if (!validationResult.IsValid)
+            var userInfoResult = await sender.Send(new GetUserByIdQuery(userId), cancellationToken);
+
+            if (userInfoResult.IsFailure)
             {
-                // TODO Custom NotFound page 
-                return NotFound();
-            }
-
-            Result<GetUserByIdDto> queryResult = await sender.Send(query, cancellationToken);
-
-            if (queryResult.IsFailure)
-            {
+                // TODO: Custom not found page.
                 return NotFound();
             }
 
             var roles = await sender.Send(new GetAllRolesQuery(), cancellationToken);
-            ViewBag.Roles = roles.Select(r => r.Name);
+            var viewModel = new UpdateUserViewModel(userInfoResult.Value, roles);
 
-            UpdateUserViewModel viewModel = queryResult.Value.ToUpdateUserViewModel();
             return View(viewModel);
         }
 
-        [HttpPost]
+        [HttpPost("{userId}/update")]
         [ValidateAntiForgeryToken]
-        [Route("{userId}/update")]
         public async Task<IActionResult> UpdateUser(
             string userId,
             [FromForm] UpdateUserViewModel viewModel,
@@ -114,21 +104,21 @@ namespace Resyaku.Web.Controllers
             if (!validationResult.IsValid)
             {
                 validationResult.AddToModelState(ModelState);
+
                 var roles = await sender.Send(new GetAllRolesQuery(), cancellationToken);
-                ViewBag.Roles = roles.Select(r => r.Name);
+                viewModel.AvailableRoles = roles;
 
                 return View(viewModel);
             }
 
-            UpdateUserCommand command = viewModel.ToUpdateUserCommand();
-            var updateResult = await sender.Send(command, cancellationToken);
+            Result updateResult = await sender.Send(viewModel.ToUpdateUserCommand(userId), cancellationToken);
 
             if (updateResult.IsFailure)
             {
                 ViewBag.UserUpdateError = updateResult.Error.Description;
 
                 var roles = await sender.Send(new GetAllRolesQuery(), cancellationToken);
-                ViewBag.Roles = roles.Select(r => r.Name);
+                viewModel.AvailableRoles = roles;
 
                 return View(viewModel);
             }

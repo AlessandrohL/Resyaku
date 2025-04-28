@@ -4,10 +4,10 @@
     {
         public int ActivityLogId { get; set; }
         public string Message { get; set; } = null!;
-        public string ReferenceRowUlid { get; init; } = null!;
+        public string ReferenceRowGuid { get; set; } = null!;
         public int ActivityLogTypeId { get; set; }
-        public ActivityLogType ActivityLogType { get; private set; } = null!;
+        public ActivityLogType ActivityLogType { get; set; } = null!;
         public string UserId { get; set; } = null!;
-        public DateTime CreatedOnUtc { get; }
+        public DateTime CreatedAt { get; }
     }
 }

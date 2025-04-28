@@ -17,21 +17,22 @@ namespace Resyaku.Infrastructure.Data.Interceptors
                 return base.SavingChangesAsync(eventData, result, cancellationToken);
             }
 
-            IEnumerable<EntityEntry<IAuditableEntity>> entries = eventData
+            IEnumerable<EntityEntry<AuditableEntity>> entries = eventData
                 .Context
                 .ChangeTracker
-                .Entries<IAuditableEntity>();
+                .Entries<AuditableEntity>();
 
             foreach (var entry in entries)
             {
-                // EntityState.Added
+                if (entry.State == EntityState.Added)
+                {
+                    entry.Entity.CreatedAt = DateTime.UtcNow;
+                }
 
                 if (entry.State == EntityState.Modified)
                 {
-                    entry.Entity.ModifiedOnUtc = DateTime.UtcNow;
+                    entry.Entity.UpdatedAt = DateTime.UtcNow;
                 }
-
-                // EntityState.Deleted
             }
 
             return base.SavingChangesAsync(eventData, result, cancellationToken);

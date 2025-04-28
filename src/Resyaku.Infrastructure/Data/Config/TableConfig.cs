@@ -13,10 +13,6 @@ namespace Resyaku.Infrastructure.Data.Config
             builder.HasKey(p => p.TableId);
 
             builder
-                .Property(p => p.TableId)
-                .HasColumnType("smallint");
-
-            builder
                 .Property(p => p.Name)
                 .IsRequired()
                 .HasMaxLength(30);
@@ -34,12 +30,12 @@ namespace Resyaku.Infrastructure.Data.Config
                 .IsRequired();
 
             builder
-                .Property(p => p.CreatedOnUtc)
-                .IsRequired()
-                .HasDefaultValueSql("GETUTCDATE()");
+                .Property(p => p.CreatedAt)
+                .HasDefaultValueSql("GETUTCDATE()")
+                .IsRequired();
 
             builder
-                .Property(p => p.ModifiedOnUtc)
+                .Property(p => p.UpdatedAt)
                 .IsRequired(false);
 
             builder
@@ -47,13 +43,11 @@ namespace Resyaku.Infrastructure.Data.Config
                 .IsRequired();
 
             builder
-                .Property(p => p.RowUlid)
-                .IsRequired()
-                .HasMaxLength(26)
-                .IsFixedLength();
+                .Property(p => p.RowGuid)
+                .IsRequired();
 
             builder
-                .HasIndex(p => p.RowUlid)
+                .HasIndex(p => p.RowGuid)
                 .IsUnique();
         }
     }

@@ -1,8 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Resyaku.Application.Data.Repositories;
 using Resyaku.Application.DTOs.Bookings;
-using Resyaku.Application.Features.Bookings.Queries.GetBookings;
-using Resyaku.Application.Mapper;
+using Resyaku.Application.Features.Bookings.Queries.GetAllBookings;
 using Resyaku.Domain.Entities;
 using Resyaku.Domain.Extensions;
 using Resyaku.Domain.Primitives;
@@ -11,7 +10,8 @@ namespace Resyaku.Infrastructure.Data.Repositories
 {
     public sealed class BookingRepository(ApplicationDbContext dbContext) : IBookingRepository
     {
-        public async Task<CollectionResult<GetAllBookingsDto>> GetAllBookingsAsync(GetAllBookingsQueryParams queryParams)
+        public async Task<CollectionResult<BookingSummaryDto>> GetAllBookingsAsync(
+            GetAllBookingsQueryParams queryParams)
         {
             var query = dbContext.Bookings
                 .AsNoTracking()
@@ -30,10 +30,18 @@ namespace Resyaku.Infrastructure.Data.Repositories
             var bookings = await query
                 .ApplyOrdering(queryParams)
                 .ApplyPagination(queryParams)
-                .Select(b => b.ToGetAllBookingsDto())
+                .Select(b => new BookingSummaryDto(
+                    b.BookingId,
+                    b.Reference,
+                    b.CreatedAt,
+                    b.BookingDate,
+                    b.Status,
+                    b.Tables.Select(t => t.Name).ToArray(),
+                    b.Customer.Dni,
+                    b.Customer.Name))
                 .ToListAsync();
 
-            return new CollectionResult<GetAllBookingsDto>(bookings, count);
+            return new CollectionResult<BookingSummaryDto>(bookings, count);
         }
 
         public void Add(Booking booking)

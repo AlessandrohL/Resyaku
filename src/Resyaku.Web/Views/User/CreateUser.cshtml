@@ -1,6 +1,6 @@
-﻿@using Resyaku.Infrastructure.Authentication.Features.Users.Commands.CreateUser
+﻿@using Resyaku.Web.ViewModels.Users
 @using Resyaku.Web.Common
-@model CreateUserCommand
+@model CreateUserViewModel
 
 @if (ViewBag.UserCreationError is not null)
 {
@@ -70,13 +70,13 @@
         <div class="col-md-3">
             <div class="form-group @ViewData.ErrorClass("Roles", "has-danger")">
                 <label for="roles" class="mb-2">Roles:</label>
-                <select asp-for="Roles" class="form-control @ViewData.ErrorClass("Roles", "is-invalid")" multiple>
-                    @foreach (var role in ViewBag.Roles as IEnumerable<string> ?? [])
+                <select asp-for="SelectedRoles" class="form-control @ViewData.ErrorClass("Roles", "is-invalid")" multiple>
+                    @foreach (var role in Model.AvailableRoles)
                     {
-                        <option value="@role">@role</option>
+                        <option value="@role.Name">@role.Name</option>
                     }
                 </select>
-                <span asp-validation-for="Roles" class="invalid-feedback"></span>
+                <span asp-validation-for="AvailableRoles" class="invalid-feedback"></span>
             </div>
         </div>
     </div>

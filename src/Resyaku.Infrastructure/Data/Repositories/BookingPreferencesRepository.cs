@@ -1,17 +1,23 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Resyaku.Application.Data.Repositories;
-using Resyaku.Application.Features.ReservationSettings.Services.DTOs;
-using Resyaku.Application.Mapper;
+using Resyaku.Application.DTOs.BookingSettings;
 
 namespace Resyaku.Infrastructure.Data.Repositories
 {
-    public sealed class BookingPreferencesRepository(ApplicationDbContext dbContext) : IBookingPreferencesRepository
+    public sealed class BookingPreferencesRepository(ApplicationDbContext dbContext) : IBookingSettingsRepository
     {
-        public async Task<GetBookingPreferencesDto?> GetPreferencesAsync()
+        public async Task<BookingSettingsInfoDto?> GetSettingsAsync()
         {
             return await dbContext.BookingPreferences
                 .AsNoTracking()
-                .Select(bp => bp.ToBookingPreferencesDto())
+                .Select(bp => new BookingSettingsInfoDto(
+                    bp.BookingTimeIncrement,
+                    bp.DailyOpeningTime,
+                    bp.DailyClosingTime,
+                    bp.MinAdvanceNoticeDays,
+                    bp.MaxAdvanceNoticeDays,
+                    bp.MaxPartySize,
+                    bp.ContactEmail))
                 .FirstOrDefaultAsync();
         }
     }

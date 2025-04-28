@@ -5,12 +5,13 @@ namespace Resyaku.Infrastructure.Authentication.Identity
     public sealed class ApplicationRole : IdentityRole<Guid>
     {
         public ICollection<ApplicationUserRole> UserRoles { get; } = [];
+        public Guid RowGuid { get; init; } = Guid.NewGuid();
 
-        private ApplicationRole() { }
+        public ApplicationRole() { }
 
-        public static ApplicationRole Create(string roleName)
+        public ApplicationRole(string name)
         {
-            return new ApplicationRole { Name = roleName };
+            Name = name;
         }
     }
 }

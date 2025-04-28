@@ -10,13 +10,13 @@ namespace Resyaku.Web.Validation.Bookings
             RuleFor(p => p.BookingDate)
                 .NotEmpty()
                 .WithMessage("La fecha de reserva es obligatoria.")
-                .Must(bookingDatetime => bookingDatetime.Date >= DateTime.Now.Date)
+                .Must(bookingDate => bookingDate >= DateOnly.FromDateTime(DateTime.Now))
                 .WithMessage("La fecha de reserva no puede ser anterior a hoy.");
 
             RuleFor(p => p.BookingTime)
                 .NotEmpty()
                 .WithMessage("La hora de reserva es obligatoria.")
-                .Must(bookingTime => TimeSpan.TryParse(bookingTime, out _))
+                .Must(bookingTime => TimeOnly.TryParse(bookingTime, out _))
                 .WithMessage("La hora de reserva debe tener un formato válido");
 
             RuleFor(p => p.Duration)
@@ -25,7 +25,7 @@ namespace Resyaku.Web.Validation.Bookings
                 .GreaterThan(0)
                 .WithMessage("La duración debe ser mayor que 0.");
 
-            RuleFor(p => p.GuestCount)
+            RuleFor(p => p.PartySize)
                 .NotEmpty()
                 .WithMessage("El número de invitados es obligatorio.")
                 .GreaterThan(0)

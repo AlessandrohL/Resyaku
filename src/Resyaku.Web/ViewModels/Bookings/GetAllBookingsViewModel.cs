@@ -1,14 +1,14 @@
 ﻿using Resyaku.Application.DTOs.Bookings;
-using Resyaku.Application.Features.Bookings.Queries.GetBookings;
+using Resyaku.Application.Features.Bookings.Queries.GetAllBookings;
 using Resyaku.Domain.Primitives;
 
 namespace Resyaku.Web.ViewModels.Bookings
 {
     public class GetAllBookingsViewModel(
         GetAllBookingsQueryParams queryParameters,
-        PagedList<GetAllBookingsDto> bookingResponses)
+        PagedList<BookingSummaryDto> bookingResponses)
     {
         public GetAllBookingsQueryParams QueryParameters { get; init; } = queryParameters;
-        public PagedList<GetAllBookingsDto> BookingResponses { get; init; } = bookingResponses;
+        public PagedList<BookingSummaryDto> BookingResponses { get; init; } = bookingResponses;
     }
 }

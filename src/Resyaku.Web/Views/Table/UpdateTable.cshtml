@@ -1,4 +1,5 @@
-﻿@using Resyaku.Application.Features.ServiceAreas.Queries.GetAllServiceAreas
+﻿@using Resyaku.Application.DTOs.ServiceAreas
+@using Resyaku.Application.Features.ServiceAreas.Queries.GetAllServiceAreas
 @using Resyaku.Web.Common
 @using Resyaku.Web.ViewModels.Tables
 @model UpdateTableViewModel
@@ -12,7 +13,6 @@
 }
 <h4 class="mb-4">Actualizar mesa - ID(@Model.TableId)</h4>
 <form asp-controller="Table" asp-action="UpdateTable" method="post">
-	<input asp-for="@Model.TableId" value="@Model.TableId" type="hidden" />
 	<div class="row g-4">
 		<div class="col-md-6">
 			<div class="row g-2 mb-3">
@@ -47,22 +47,22 @@
 				<div class="row g-2 mb-3">
 					<div class="col-6 form-group @ViewData.ErrorClass("ServiceAreaId", "has-danger")">
 						<label for="serviceArea" class="mb-2">Área de servicio:</label>
-						<select asp-for="ServiceAreaId"
+						<select asp-for="SelectedServiceAreaId"
 								id="serviceArea"
 								class="form-control @ViewData.ErrorClass("ServiceAreaId", "is-invalid")">
-							<option value="0">--Seleccionar--</option>
-							@foreach (var serviceArea in ViewBag.ServicesAreas as List<GetAllServiceAreasDto> ?? [])
+							<option disabled="disabled" value="0">--Seleccionar--</option>
+							@foreach (var serviceArea in Model.AvailableServiceAreas)
 							{
-								<option selected="@(Model.ServiceAreaId == serviceArea.Id)"
+								<option selected="@(Model.SelectedServiceAreaId == serviceArea.Id)"
 										value="@serviceArea.Id">@serviceArea.Name</option>
 							}
 						</select>
-						<span asp-validation-for="ServiceAreaId" class="invalid-feedback"></span>
+						<span asp-validation-for="SelectedServiceAreaId" class="invalid-feedback"></span>
 					</div>
 				</div>
 				<div class="form-group form-check form-switch @ViewData.ErrorClass("IsActive", "has-danger")">
-					<input class="form-check-input" asp-for="IsActive" type="checkbox" id="flexSwitchCheckChecked" checked>
-					<label class="form-check-label" for="flexSwitchCheckChecked">En funcionamiento</label>
+					<input class="form-check-input" asp-for="IsActive" type="checkbox" id="isActiveSwitch">
+					<label class="form-check-label" for="isActiveSwitch">En funcionamiento</label>
 					<span asp-validation-for="IsActive" class="invalid-feedback"></span>
 				</div>
 			</div>

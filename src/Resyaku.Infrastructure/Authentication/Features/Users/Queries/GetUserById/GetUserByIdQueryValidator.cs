@@ -10,7 +10,7 @@ namespace Resyaku.Infrastructure.Authentication.Features.Users.Queries.GetUserBy
                 .NotEmpty()
                 .WithMessage("El id no puede estar vacío.")
                 .Must(p => Guid.TryParse(p, out _))
-                .WithMessage("El id ingresado tiene un formato válido.");
+                .WithMessage("El id ingresado tiene un formato inválido.");
         }
 
     }

@@ -2,14 +2,13 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Resyaku.Application.Features.ServiceAreas.Queries.GetAllServiceAreas;
-using Resyaku.Application.Features.Tables.Commands.CreateTable;
 using Resyaku.Application.Features.Tables.Commands.UpdateTable;
 using Resyaku.Application.Features.Tables.Queries.GetAllTables;
 using Resyaku.Application.Features.Tables.Queries.GetAvailableTables;
 using Resyaku.Application.Features.Tables.Queries.GetTableById;
 using Resyaku.Domain.Primitives;
 using Resyaku.Web.Extensions;
-using Resyaku.Web.Mappers;
+using Resyaku.Web.Mapper;
 using Resyaku.Web.ViewModels.Tables;
 
 namespace Resyaku.Web.Controllers
@@ -17,60 +16,64 @@ namespace Resyaku.Web.Controllers
     [Route("tables")]
     public sealed class TableController(
         ISender sender,
-        IValidator<CreateTableCommand> createTableValidator,
+        IValidator<CreateTableViewModel> createTableValidator,
         IValidator<UpdateTableViewModel> updateTableValidator,
         IValidator<GetAvailableTablesQueryParams> availableTablesQueryValidator)
         : Controller
     {
+        // OK
+        [HttpGet]
         public async Task<IActionResult> Index(
-            [FromQuery] GetAllTablesQueryParameters queryParameters,
+            [FromQuery] GetAllTablesQueryParams queryParameters,
             CancellationToken cancellationToken)
         {
             var pagedTables = await sender.Send(new GetAllTablesQuery(queryParameters), cancellationToken);
-            var tablesViewModel = new GetAllTablesViewModel(queryParameters, pagedTables);
-
             var servicesAreas = await sender.Send(new GetAllServiceAreasQuery(), cancellationToken);
-            ViewBag.ServicesAreas = servicesAreas;
+            
+            var viewModel = new GetAllTablesViewModel(queryParameters, pagedTables, servicesAreas);
 
-            return View(tablesViewModel);
+            return View(viewModel);
         }
 
-        [Route("create")]
+        // OK
+        [HttpGet("create")]
         public async Task<IActionResult> CreateTable(CancellationToken cancellationToken)
         {
             var servicesAreas = await sender.Send(new GetAllServiceAreasQuery(), cancellationToken);
-            ViewBag.ServicesAreas = servicesAreas;
+            var viewModel = new CreateTableViewModel(servicesAreas);
 
-            return View();
+            return View(viewModel);
         }
 
-        [HttpPost]
+        // OK
+        [HttpPost("create")]
         [ValidateAntiForgeryToken]
-        [Route("create")]
         public async Task<IActionResult> CreateTable(
-            CreateTableCommand command,
+            CreateTableViewModel viewModel,
             CancellationToken cancellationToken)
         {
-            var validationResult = await createTableValidator.ValidateAsync(command, cancellationToken);
+            var validationResult = await createTableValidator.ValidateAsync(viewModel, cancellationToken);
 
             if (!validationResult.IsValid)
             {
                 validationResult.AddToModelState(ModelState);
 
-                var servicesAreas = await sender.Send(new GetAllServiceAreasQuery(), cancellationToken);
-                ViewBag.ServicesAreas = servicesAreas;
+                var serviceAreas = await sender.Send(new GetAllServiceAreasQuery(), cancellationToken);
+                viewModel.AvailableServiceAreas = serviceAreas;
 
-                return View(command);
+                return View(viewModel);
             }
 
-            var creationResult = await sender.Send(command, cancellationToken);
+            var creationResult = await sender.Send(viewModel.ToCreateTableCommand(), cancellationToken);
 
             if (creationResult.IsFailure)
             {
+                var serviceAreas = await sender.Send(new GetAllServiceAreasQuery(), cancellationToken);
+                
                 ViewBag.TableCreationError = creationResult.Error.Description;
-                ViewBag.ServicesAreas = await sender.Send(new GetAllServiceAreasQuery(), cancellationToken);
+                viewModel.AvailableServiceAreas = serviceAreas;
 
-                return View(command);
+                return View(viewModel);
             }
 
             TempData["Table.Created"] = "Mesa registrada con éxito.";
@@ -78,27 +81,26 @@ namespace Resyaku.Web.Controllers
             return RedirectToAction("Index");
         }
 
-        [HttpGet]
-        [Route("{tableId}/update")]
+        // OK
+        [HttpGet("{tableId}/update")]
         public async Task<IActionResult> UpdateTable(int tableId, CancellationToken cancellationToken)
         {
-            var query = new GetTableByIdQuery(tableId);
-            Result<GetTableByIdDto> queryResult = await sender.Send(query, cancellationToken);
+            var tableResult = await sender.Send(new GetTableByIdQuery(tableId), cancellationToken);
 
-            if (queryResult.IsFailure)
+            if (tableResult.IsFailure)
             {
                 return NotFound();
             }
 
-            UpdateTableViewModel viewModel = queryResult.Value.ToUpdateTableViewModel();
-            ViewBag.ServicesAreas = await sender.Send(new GetAllServiceAreasQuery(), cancellationToken);
+            var serviceAreas = await sender.Send(new GetAllServiceAreasQuery(), cancellationToken);
+            var viewModel = new UpdateTableViewModel(tableResult.Value, serviceAreas);
 
             return View(viewModel);
         }
 
-        [HttpPost]
+        // OK
         [ValidateAntiForgeryToken]
-        [Route("{tableId}/update")]
+        [HttpPost("{tableId}/update")]
         public async Task<IActionResult> UpdateTable(
             int tableId,
             [FromForm] UpdateTableViewModel viewModel,
@@ -109,20 +111,25 @@ namespace Resyaku.Web.Controllers
             if (!validationResult.IsValid)
             {
                 validationResult.AddToModelState(ModelState);
-                ViewBag.ServicesAreas = await sender.Send(new GetAllServiceAreasQuery(), cancellationToken);
+
+                viewModel.AvailableServiceAreas = await sender.Send(
+                    new GetAllServiceAreasQuery(), 
+                    cancellationToken);
 
                 return View(viewModel);
             }
 
-            UpdateTableCommand command = viewModel.ToUpdateTableCommand();
-            var updateResult = await sender.Send(command, cancellationToken);
+            Result updateResult = await sender.Send(viewModel.ToUpdateTableCommand(tableId), cancellationToken);
 
             if (updateResult.IsFailure)
             {
                 ViewBag.TableUpdateError = updateResult.Error.Description;
-                ViewBag.ServicesAreas = await sender.Send(new GetAllServiceAreasQuery(), cancellationToken);
+                
+                viewModel.AvailableServiceAreas = await sender.Send(
+                    new GetAllServiceAreasQuery(), 
+                    cancellationToken);
 
-                return View(command);
+                return View(viewModel);
             }
 
             TempData["Table.Updated"] = "Mesa actualizada correctamente.";
@@ -130,22 +137,28 @@ namespace Resyaku.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        //NOTE: Refactorizar este metodo y actualizar la petición JS.
         [HttpGet("available")]
         public async Task<IActionResult> GetAvailableTables(
-            [FromQuery] GetAvailableTablesQueryParams queryParams)
+            [FromQuery] GetAvailableTablesQueryParams queryParams,
+            CancellationToken cancellationToken)
         {
-            var validationResult = await availableTablesQueryValidator.ValidateAsync(queryParams);
+            var validationResult = await availableTablesQueryValidator.ValidateAsync(queryParams, cancellationToken);
+
             if (!validationResult.IsValid)
             {
                 validationResult.AddToModelState(ModelState);
                 return BadRequest(ModelState);
             }
+
             var query = new GetAvailableTablesQuery(
                 queryParams.BookingDate,
                 queryParams.BookingTime,
                 queryParams.Duration);
-            var resp = await sender.Send(query);
-            return Ok(resp);
+
+            var availableTables = await sender.Send(query, cancellationToken);
+            
+            return Ok(availableTables);
         }
     }
 }

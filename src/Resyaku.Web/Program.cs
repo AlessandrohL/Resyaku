@@ -2,10 +2,10 @@ using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Resyaku.Application;
 using Resyaku.Infrastructure;
-using Resyaku.Infrastructure.AppOptions;
 using Resyaku.Infrastructure.Authentication.Identity;
 using Resyaku.Infrastructure.Data;
 using Resyaku.Infrastructure.Data.Seed;
+using Resyaku.Web.SetupOptions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,15 +43,15 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.LoginPath = "/Auth/Login";
 });
 
-builder.Services.Configure<BookingPreferencesOptions>(builder.Configuration.GetRequiredSection("DefaultBookingPreferences"));
+builder.Services.ConfigureOptions<DefaultAdminOptionsSetup>();
+builder.Services.ConfigureOptions<DefaultBookingSettingsOptionsSetup>();
 
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-    var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
-    await SeedDefaultAdmin.Initialize(scope.ServiceProvider, configuration);
-    await SeedDefaultApplicationPreferences.Initialize(scope.ServiceProvider, configuration);
+    await SeedDefaultAdmin.Initialize(scope.ServiceProvider);
+    await SeedDefaultBookingSettings.Initialize(scope.ServiceProvider);
 }
 
 if (!app.Environment.IsDevelopment())

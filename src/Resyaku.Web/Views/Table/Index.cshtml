@@ -1,4 +1,4 @@
-﻿@using Resyaku.Application.Features.ServiceAreas.Queries.GetAllServiceAreas
+﻿@using Resyaku.Application.DTOs.ServiceAreas
 @using Resyaku.Web.ViewModels.Tables
 @model GetAllTablesViewModel
 
@@ -22,8 +22,8 @@
         <div class="form-group col-md-4">
             <label for="Lastname" class="mb-2">Área de servicio</label>
             <select class="form-control" id="ServiceArea" name="ServiceAreaId" value="@Model.QueryParameters.ServiceAreaId">
-                <option value="0">--Seleccionar--</option>
-                @foreach (var serviceArea in ViewBag.ServicesAreas as List<GetAllServiceAreasDto> ?? []) 
+                <option disabled="disabled" selected value="0">--Seleccionar--</option>
+                @foreach (var serviceArea in Model.ServiceAreas) 
                 {
                     <option selected="@(Model.QueryParameters.ServiceAreaId == serviceArea.Id)" 
                         value="@serviceArea.Id">
@@ -56,7 +56,7 @@
                 <td class="text-truncate align-content-center">@table.Name</td>
                 <td class="align-content-center">@table.MinCapacity</td>
                 <td class="align-content-center">@table.MaxCapacity</td>
-                <td class="align-content-center">@table.ServiceAreaName</td>
+                <td class="align-content-center">@table.ServiceArea.Name</td>
                 <td class="align-content-center">
                     @if(table.IsActive) 
                     {
@@ -75,7 +75,7 @@
                                 aria-expanded="false">
                         </button>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" asp-controller="Table" asp-action="UpdateTable" asp-route-tableId="@table.TableId">Editar</a></li>
+                            <li><a class="dropdown-item" asp-controller="Table" asp-action="UpdateTable" asp-route-tableId="@table.Id">Editar</a></li>
                         </ul>
                     </div>
                 </td>

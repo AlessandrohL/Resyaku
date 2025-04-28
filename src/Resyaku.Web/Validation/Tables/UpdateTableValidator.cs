@@ -29,7 +29,7 @@ namespace Resyaku.Web.Validation.Tables
                 .LessThanOrEqualTo(255)
                 .WithMessage("La capacidad máxima no puede ser mayor a 255.");
 
-            RuleFor(p => p.ServiceAreaId)
+            RuleFor(p => p.SelectedServiceAreaId)
                 .NotEmpty()
                 .WithMessage("El área de servicio es obligatorio.")
                 .NotEqual(0)

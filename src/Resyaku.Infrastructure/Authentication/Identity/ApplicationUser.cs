@@ -6,32 +6,25 @@ namespace Resyaku.Infrastructure.Authentication.Identity
     {
         public string Firstname { get; set; } = null!;
         public string? Lastname { get; set; }
-        public string RowUlid { get; private set; } = null!;
         public ICollection<ApplicationUserRole> UserRoles { get; } = [];
-        public DateTime CreatedOnUtc { get; init; }
-        public DateTime? ModifiedOnUtc { get; set; }
+        public DateTime CreatedAt { get; init; }
+        public DateTime? UpdatedAt { get; set; }
+        public Guid RowGuid { get; init; } = Guid.NewGuid();
 
-        private ApplicationUser() { }
+        public ApplicationUser() { }
 
-        public static ApplicationUser Create(
+        public ApplicationUser(
             string firstname,
             string? lastname,
-            string phone,
+            string? username,
             string email,
-            string? username)
+            string phone)
         {
-            var user = new ApplicationUser
-            {
-                Firstname = firstname,
-                Lastname = lastname,
-                PhoneNumber = phone,
-                Email = email,
-                UserName = string.IsNullOrEmpty(username) ? email : username,
-                RowUlid = Ulid.NewUlid().ToString(),
-                CreatedOnUtc = DateTime.UtcNow
-            };
-
-            return user;
+            Firstname = firstname;
+            Lastname = lastname;
+            PhoneNumber = phone;
+            Email = email;
+            UserName = string.IsNullOrEmpty(username) ? email : username;
         }
 
         public string GetFullname()

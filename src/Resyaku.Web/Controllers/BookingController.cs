@@ -4,9 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Resyaku.Application.Features.Bookings.Commands.CreateBooking;
 using Resyaku.Application.Features.Bookings.Queries.GetAllBookings;
 using Resyaku.Application.Features.Bookings.Queries.GetBookingAvailability;
-using Resyaku.Application.Features.Bookings.Queries.GetBookings;
 using Resyaku.Web.Extensions;
-using Resyaku.Web.Mappers;
+using Resyaku.Web.Mapper;
 using Resyaku.Web.ViewModels.Bookings;
 
 namespace Resyaku.Web.Controllers

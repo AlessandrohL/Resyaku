@@ -18,9 +18,9 @@ namespace Resyaku.Infrastructure.Data.Config
                 .HasMaxLength(2000);
 
             builder
-                .Property(p => p.ReferenceRowUlid)
+                .Property(p => p.ReferenceRowGuid)
                 .IsRequired()
-                .HasMaxLength(26)
+                .HasMaxLength(36)
                 .IsFixedLength();
 
             builder
@@ -30,7 +30,7 @@ namespace Resyaku.Infrastructure.Data.Config
                 .IsFixedLength();
 
             builder
-                .Property(p => p.CreatedOnUtc)
+                .Property(p => p.CreatedAt)
                 .IsRequired()
                 .HasDefaultValueSql("GETUTCDATE()");
         }

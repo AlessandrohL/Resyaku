@@ -1,7 +1,7 @@
-﻿@using Resyaku.Application.Features.ServiceAreas.Queries.GetAllServiceAreas
-@using Resyaku.Application.Features.Tables.Commands.CreateTable
+﻿@using Resyaku.Web.ViewModels.Tables
+@using Resyaku.Application.DTOs.ServiceAreas
 @using Resyaku.Web.Common
-@model CreateTableCommand
+@model CreateTableViewModel
 
 @if (ViewBag.TableCreationError is not null)
 {
@@ -32,7 +32,7 @@
 						<span asp-validation-for="MinCapacity" class="invalid-feedback"></span>
 					</div>
 					<div class="col-6 form-group @ViewData.ErrorClass("MaxCapactity", "has-danger")">
-						<label for="maxCapacity" class="mb-2 ">Máximo de comensales por reserva:</label>
+						<label for="maxCapacity" class="mb-2 ">Cobertura Maxima:</label>
 						<input asp-for="MaxCapacity"
 							   id="maxCapacity"
 							   type="number"
@@ -46,8 +46,8 @@
 						<select asp-for="ServiceAreaId"
 							   id="serviceArea"
 								class="form-control @ViewData.ErrorClass("ServiceAreaId", "is-invalid")">
-							<option value="0">--Seleccionar--</option>
-							@foreach (var serviceArea in ViewBag.ServicesAreas as List<GetAllServiceAreasDto> ?? [])
+							<option disabled="disabled" value="0">--Seleccionar--</option>
+							@foreach (var serviceArea in Model.AvailableServiceAreas)
 							{
 								<option value="@serviceArea.Id">@serviceArea.Name</option>
 							}

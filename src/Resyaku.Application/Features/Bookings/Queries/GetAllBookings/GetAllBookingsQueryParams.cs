@@ -2,7 +2,7 @@
 using Resyaku.Domain.Entities;
 using Resyaku.Domain.Primitives;
 
-namespace Resyaku.Application.Features.Bookings.Queries.GetBookings
+namespace Resyaku.Application.Features.Bookings.Queries.GetAllBookings
 {
     public sealed class GetAllBookingsQueryParams : PaginationParameters, IQueryFilter<Booking>
     {
@@ -13,8 +13,8 @@ namespace Resyaku.Application.Features.Bookings.Queries.GetBookings
         public string? CustomerPhone { get; set; }
         public string? CustomerEmail { get; set; }
         public string? CustomerDni { get; set; }
-        public DateTime? StartDate { get; set; }
-        public DateTime? EndDate { get; set; }
+        public DateOnly? StartDate { get; set; }
+        public DateOnly? EndDate { get; set; }
         public string? Status { get; set; }
 
         public Expression<Func<Booking, object>> GetSortProperty()
@@ -22,7 +22,7 @@ namespace Resyaku.Application.Features.Bookings.Queries.GetBookings
             return SortColumn?.ToLower() switch
             {
                 "bookingDate" => booking => booking.BookingDate,
-                "createdAt" => booking => booking.CreatedOnUtc,
+                "createdAt" => booking => booking.CreatedAt,
                 _ => booking => booking.BookingDate
             };
         }

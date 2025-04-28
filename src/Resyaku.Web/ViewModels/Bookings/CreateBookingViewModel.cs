@@ -1,14 +1,14 @@
-﻿using Resyaku.Application.Features.Bookings.Queries.GetBookingAvailability;
+﻿using Resyaku.Application.DTOs.Bookings;
 using Resyaku.Domain.Enums;
 
 namespace Resyaku.Web.ViewModels.Bookings
 {
     public class CreateBookingViewModel
     {
-        public DateTime BookingDate { get; set; }
+        public DateOnly BookingDate { get; set; }
         public string BookingTime { get; set; } = null!;
         public int Duration { get; set; }
-        public int GuestCount { get; set; }
+        public int PartySize { get; set; }
         public BookingStatus BookingStatus { get; set; }
         public string? PrivateComment { get; set; }
         public string? PublicComment { get; set; }

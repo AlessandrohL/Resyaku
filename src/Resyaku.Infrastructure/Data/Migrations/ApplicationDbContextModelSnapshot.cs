@@ -121,7 +121,7 @@ namespace Resyaku.Infrastructure.Data.Migrations
                     b.Property<int>("ActivityLogTypeId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("CreatedOnUtc")
+                    b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETUTCDATE()");
@@ -131,10 +131,10 @@ namespace Resyaku.Infrastructure.Data.Migrations
                         .HasMaxLength(2000)
                         .HasColumnType("nvarchar(2000)");
 
-                    b.Property<string>("ReferenceRowUlid")
+                    b.Property<string>("ReferenceRowGuid")
                         .IsRequired()
-                        .HasMaxLength(26)
-                        .HasColumnType("nchar(26)")
+                        .HasMaxLength(36)
+                        .HasColumnType("nchar(36)")
                         .IsFixedLength();
 
                     b.Property<string>("UserId")
@@ -176,11 +176,8 @@ namespace Resyaku.Infrastructure.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BookingId"));
 
-                    b.Property<DateTime>("BookingDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<TimeSpan>("BookingTime")
-                        .HasColumnType("time");
+                    b.Property<DateOnly>("BookingDate")
+                        .HasColumnType("date");
 
                     b.Property<string>("ContactPhone")
                         .IsRequired()
@@ -188,10 +185,13 @@ namespace Resyaku.Infrastructure.Data.Migrations
                         .HasColumnType("nchar(9)")
                         .IsFixedLength();
 
-                    b.Property<DateTime>("CreatedOnUtc")
+                    b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int");
 
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
@@ -199,14 +199,11 @@ namespace Resyaku.Infrastructure.Data.Migrations
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<short>("Duration")
-                        .HasColumnType("smallint");
+                    b.Property<int>("DurationMinutes")
+                        .HasColumnType("int");
 
-                    b.Property<DateTime>("EndTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<byte>("GuestCount")
-                        .HasColumnType("tinyint");
+                    b.Property<TimeOnly>("EndTime")
+                        .HasColumnType("time");
 
                     b.Property<bool>("IsConfirmed")
                         .HasColumnType("bit");
@@ -214,11 +211,8 @@ namespace Resyaku.Infrastructure.Data.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsWalking")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("ModifiedOnUtc")
-                        .HasColumnType("datetime2");
+                    b.Property<int>("PartySize")
+                        .HasColumnType("int");
 
                     b.Property<string>("PrivateComment")
                         .HasMaxLength(250)
@@ -233,21 +227,27 @@ namespace Resyaku.Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("RowUlid")
-                        .IsRequired()
-                        .HasMaxLength(26)
-                        .HasColumnType("nchar(26)")
-                        .IsFixedLength();
+                    b.Property<Guid>("RowGuid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<TimeOnly>("StartTime")
+                        .HasColumnType("time");
 
                     b.Property<short>("Status")
                         .HasColumnType("smallint");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UpdatedBy")
+                        .HasColumnType("int");
 
                     b.HasKey("BookingId");
 
                     b.HasIndex("BookingDate")
                         .IsDescending();
 
-                    b.HasIndex("CreatedOnUtc")
+                    b.HasIndex("CreatedAt")
                         .IsDescending();
 
                     b.HasIndex("CustomerId");
@@ -255,7 +255,7 @@ namespace Resyaku.Infrastructure.Data.Migrations
                     b.HasIndex("Reference")
                         .IsUnique();
 
-                    b.HasIndex("RowUlid")
+                    b.HasIndex("RowGuid")
                         .IsUnique();
 
                     b.ToTable("Booking", null, t =>
@@ -264,29 +264,32 @@ namespace Resyaku.Infrastructure.Data.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Resyaku.Domain.Entities.BookingPreferences", b =>
+            modelBuilder.Entity("Resyaku.Domain.Entities.BookingSettings", b =>
                 {
-                    b.Property<short>("BookingPrefId")
+                    b.Property<int>("BookingPrefId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("smallint");
+                        .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<short>("BookingPrefId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BookingPrefId"));
 
-                    b.Property<short>("BookingTimeIncrement")
-                        .HasColumnType("smallint");
+                    b.Property<int>("BookingTimeIncrement")
+                        .HasColumnType("int");
 
                     b.Property<string>("ContactEmail")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<DateTime>("CreatedOnUtc")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<TimeSpan>("DailyClosingTime")
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<TimeOnly>("DailyClosingTime")
                         .HasColumnType("time");
 
-                    b.Property<TimeSpan>("DailyOpeningTime")
+                    b.Property<TimeOnly>("DailyOpeningTime")
                         .HasColumnType("time");
 
                     b.Property<bool>("IsSpecial")
@@ -294,30 +297,32 @@ namespace Resyaku.Infrastructure.Data.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<short>("MaxDaysInAdvance")
-                        .HasColumnType("smallint");
+                    b.Property<int>("MaxAdvanceNoticeDays")
+                        .HasColumnType("int");
 
-                    b.Property<short>("MaxGuests")
-                        .HasColumnType("smallint");
+                    b.Property<int>("MaxPartySize")
+                        .HasColumnType("int");
 
-                    b.Property<short>("MinAdvanceNotice")
-                        .HasColumnType("smallint");
+                    b.Property<int>("MinAdvanceNoticeDays")
+                        .HasColumnType("int");
 
-                    b.Property<DateTime?>("ModifiedOnUtc")
+                    b.Property<Guid>("RowGuid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("RowUlid")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("UpdatedBy")
+                        .HasColumnType("int");
 
                     b.HasKey("BookingPrefId");
 
                     b.HasIndex("IsSpecial")
                         .IsUnique();
 
-                    b.ToTable("BookingPreferences", null, t =>
+                    b.ToTable("BookingSettings", null, t =>
                         {
-                            t.HasCheckConstraint("CK_BookingPreferences_IsSpecial", "[IsSpecial] = 0");
+                            t.HasCheckConstraint("CK_BookingSettings_IsSpecial", "[IsSpecial] = 0");
                         });
                 });
 
@@ -326,8 +331,8 @@ namespace Resyaku.Infrastructure.Data.Migrations
                     b.Property<int>("BookingId")
                         .HasColumnType("int");
 
-                    b.Property<short>("TableId")
-                        .HasColumnType("smallint");
+                    b.Property<int>("TableId")
+                        .HasColumnType("int");
 
                     b.HasKey("BookingId", "TableId");
 
@@ -344,10 +349,13 @@ namespace Resyaku.Infrastructure.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CustomerId"));
 
-                    b.Property<DateTime>("CreatedOnUtc")
+                    b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
@@ -368,16 +376,13 @@ namespace Resyaku.Infrastructure.Data.Migrations
 
                     b.Property<string>("Lastname")
                         .IsRequired()
-                        .HasMaxLength(40)
-                        .HasColumnType("nvarchar(40)");
-
-                    b.Property<DateTime?>("ModifiedOnUtc")
-                        .HasColumnType("datetime2");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(40)
-                        .HasColumnType("nvarchar(40)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Phone")
                         .IsRequired()
@@ -385,11 +390,14 @@ namespace Resyaku.Infrastructure.Data.Migrations
                         .HasColumnType("nchar(9)")
                         .IsFixedLength();
 
-                    b.Property<string>("RowUlid")
-                        .IsRequired()
-                        .HasMaxLength(26)
-                        .HasColumnType("nchar(26)")
-                        .IsFixedLength();
+                    b.Property<Guid>("RowGuid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UpdatedBy")
+                        .HasColumnType("int");
 
                     b.HasKey("CustomerId");
 
@@ -399,7 +407,7 @@ namespace Resyaku.Infrastructure.Data.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.HasIndex("RowUlid")
+                    b.HasIndex("RowGuid")
                         .IsUnique();
 
                     b.HasIndex("Name", "Lastname");
@@ -415,10 +423,13 @@ namespace Resyaku.Infrastructure.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ServiceAreaId"));
 
-                    b.Property<DateTime>("CreatedOnUtc")
+                    b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
@@ -426,23 +437,23 @@ namespace Resyaku.Infrastructure.Data.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime?>("ModifiedOnUtc")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("RowUlid")
-                        .IsRequired()
-                        .HasMaxLength(26)
-                        .HasColumnType("nchar(26)")
-                        .IsFixedLength();
+                    b.Property<Guid>("RowGuid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UpdatedBy")
+                        .HasColumnType("int");
 
                     b.HasKey("ServiceAreaId");
 
-                    b.HasIndex("RowUlid")
+                    b.HasIndex("RowGuid")
                         .IsUnique();
 
                     b.ToTable("ServiceArea", (string)null);
@@ -450,16 +461,19 @@ namespace Resyaku.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Resyaku.Domain.Entities.Table", b =>
                 {
-                    b.Property<short>("TableId")
+                    b.Property<int>("TableId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("smallint");
+                        .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<short>("TableId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TableId"));
 
-                    b.Property<DateTime>("CreatedOnUtc")
+                    b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
@@ -476,26 +490,26 @@ namespace Resyaku.Infrastructure.Data.Migrations
                     b.Property<int>("MinCapacity")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("ModifiedOnUtc")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
-                    b.Property<string>("RowUlid")
-                        .IsRequired()
-                        .HasMaxLength(26)
-                        .HasColumnType("nchar(26)")
-                        .IsFixedLength();
+                    b.Property<Guid>("RowGuid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("ServiceAreaId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UpdatedBy")
+                        .HasColumnType("int");
+
                     b.HasKey("TableId");
 
-                    b.HasIndex("RowUlid")
+                    b.HasIndex("RowGuid")
                         .IsUnique();
 
                     b.HasIndex("ServiceAreaId");
@@ -523,11 +537,17 @@ namespace Resyaku.Infrastructure.Data.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<Guid>("RowGuid")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()
                         .HasDatabaseName("RoleNameIndex");
+
+                    b.HasIndex("RowGuid")
+                        .IsUnique();
 
                     b.ToTable("ApplicationRole", (string)null);
                 });
@@ -545,7 +565,7 @@ namespace Resyaku.Infrastructure.Data.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CreatedOnUtc")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
@@ -571,9 +591,6 @@ namespace Resyaku.Infrastructure.Data.Migrations
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<DateTime?>("ModifiedOnUtc")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("NormalizedEmail")
                         .IsRequired()
                         .HasMaxLength(256)
@@ -597,17 +614,17 @@ namespace Resyaku.Infrastructure.Data.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<string>("RowUlid")
-                        .IsRequired()
-                        .HasMaxLength(26)
-                        .HasColumnType("nchar(26)")
-                        .IsFixedLength();
+                    b.Property<Guid>("RowGuid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("UserName")
                         .IsRequired()
@@ -622,6 +639,9 @@ namespace Resyaku.Infrastructure.Data.Migrations
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
+
+                    b.HasIndex("RowGuid")
+                        .IsUnique();
 
                     b.ToTable("ApplicationUser", (string)null);
                 });
