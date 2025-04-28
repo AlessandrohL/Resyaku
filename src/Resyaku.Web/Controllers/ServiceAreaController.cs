@@ -17,7 +17,6 @@ namespace Resyaku.Web.Controllers
         IValidator<UpdateServiceAreaViewModel> updateServiceAreaValidator)
         : Controller
     {
-        // OK
         [HttpGet]
         public async Task<IActionResult> Index(CancellationToken cancellationToken)
         {
@@ -26,14 +25,12 @@ namespace Resyaku.Web.Controllers
             return View(serviceAreas);
         }
 
-        // OK
         [HttpGet("create")]
         public IActionResult CreateServiceArea()
         {
             return View();
         }
 
-        // OK
         [HttpPost("create")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateServiceArea(
@@ -61,7 +58,6 @@ namespace Resyaku.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // OK
         [HttpGet("{serviceAreaId}/update")]
         public async Task<IActionResult> UpdateServiceArea(int serviceAreaId, CancellationToken cancellationToken)
         {
@@ -77,8 +73,6 @@ namespace Resyaku.Web.Controllers
             return View(viewModel);
         }
 
-        // OK
-        // FIX: No se muestra el mensaje cuando se actualiza correctamente el area. 
         [HttpPost("{serviceAreaId}/update")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateServiceArea(
