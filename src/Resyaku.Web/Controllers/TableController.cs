@@ -21,7 +21,6 @@ namespace Resyaku.Web.Controllers
         IValidator<GetAvailableTablesQueryParams> availableTablesQueryValidator)
         : Controller
     {
-        // OK
         [HttpGet]
         public async Task<IActionResult> Index(
             [FromQuery] GetAllTablesQueryParams queryParameters,
@@ -35,7 +34,6 @@ namespace Resyaku.Web.Controllers
             return View(viewModel);
         }
 
-        // OK
         [HttpGet("create")]
         public async Task<IActionResult> CreateTable(CancellationToken cancellationToken)
         {
@@ -45,7 +43,6 @@ namespace Resyaku.Web.Controllers
             return View(viewModel);
         }
 
-        // OK
         [HttpPost("create")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateTable(
@@ -76,12 +73,11 @@ namespace Resyaku.Web.Controllers
                 return View(viewModel);
             }
 
-            TempData["Table.Created"] = "Mesa registrada con éxito.";
+            TempData["Table.Created"] = "Mesa registrada correctamente.";
 
             return RedirectToAction("Index");
         }
 
-        // OK
         [HttpGet("{tableId}/update")]
         public async Task<IActionResult> UpdateTable(int tableId, CancellationToken cancellationToken)
         {
@@ -98,7 +94,6 @@ namespace Resyaku.Web.Controllers
             return View(viewModel);
         }
 
-        // OK
         [ValidateAntiForgeryToken]
         [HttpPost("{tableId}/update")]
         public async Task<IActionResult> UpdateTable(
@@ -137,7 +132,6 @@ namespace Resyaku.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        //NOTE: Refactorizar este metodo y actualizar la petición JS.
         [HttpGet("available")]
         public async Task<IActionResult> GetAvailableTables(
             [FromQuery] GetAvailableTablesQueryParams queryParams,
