@@ -35,7 +35,9 @@ namespace Resyaku.Infrastructure.Data.Repositories
                     b.Reference,
                     b.CreatedAt,
                     b.BookingDate,
+                    b.StartTime,
                     b.Status,
+                    b.PartySize,
                     b.Tables.Select(t => t.Name).ToArray(),
                     b.Customer.Dni,
                     b.Customer.Name))

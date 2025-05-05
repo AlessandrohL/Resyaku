@@ -3,11 +3,13 @@
 namespace Resyaku.Application.DTOs.Bookings;
 
 public record BookingSummaryDto(
-    int BookingId,
-    string BookingReference,
-    DateTime CreationDate,
-    DateOnly BookingDate,
-    BookingStatus BookingStatus,
+    int Id,
+    string Reference,
+    DateTime CreatedAt,
+    DateOnly Date,
+    TimeOnly StartTime,
+    BookingStatus Status,
+    int PartySize,
     string[] Tables,
     string CustomerDni,
     string CustomerName);
