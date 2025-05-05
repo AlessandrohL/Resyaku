@@ -11,6 +11,7 @@ namespace Resyaku.Application.Features.Tables.Queries.GetAllTables
         public string? SortOrder { get; set; }
 
         public int ServiceAreaId { get; set; }
+        public bool? Enabled { get; set; }
 
         public Expression<Func<Table, object>> GetSortProperty()
         {
