@@ -2,7 +2,6 @@
 using Resyaku.Application.Data.Repositories;
 using Resyaku.Application.DTOs.Tables;
 using Resyaku.Application.Errors;
-using Resyaku.Application.Mapper;
 using Resyaku.Domain.Primitives;
 
 namespace Resyaku.Application.Features.Tables.Queries.GetTableById
@@ -14,14 +13,14 @@ namespace Resyaku.Application.Features.Tables.Queries.GetTableById
     {
         public async Task<Result<TableSummaryDto>> Handle(GetTableByIdQuery request, CancellationToken cancellationToken)
         {
-            var existingTable = await tableRepository.GetByIdAsync(request.TableId);
+            var existingTable = await tableRepository.GetTableSummaryByIdAsync(request.TableId);
 
             if (existingTable is null)
             {
                 return Result.Failure<TableSummaryDto>(TableErrors.NotFound);
             }
 
-            return Result.Success(existingTable.ToTableSummary());
+            return Result.Success(existingTable);
         }
     }
 }

@@ -2,7 +2,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Resyaku.Application.Features.ServiceAreas.Queries.GetAllServiceAreas;
-using Resyaku.Application.Features.Tables.Commands.UpdateTable;
 using Resyaku.Application.Features.Tables.Queries.GetAllTables;
 using Resyaku.Application.Features.Tables.Queries.GetAvailableTables;
 using Resyaku.Application.Features.Tables.Queries.GetTableById;
@@ -23,13 +22,13 @@ namespace Resyaku.Web.Controllers
     {
         [HttpGet]
         public async Task<IActionResult> Index(
-            [FromQuery] GetAllTablesQueryParams queryParameters,
+            [FromQuery] GetAllTablesQueryParams queryParams,
             CancellationToken cancellationToken)
         {
-            var pagedTables = await sender.Send(new GetAllTablesQuery(queryParameters), cancellationToken);
+            var pagedTables = await sender.Send(new GetAllTablesQuery(queryParams), cancellationToken);
             var servicesAreas = await sender.Send(new GetAllServiceAreasQuery(), cancellationToken);
             
-            var viewModel = new GetAllTablesViewModel(queryParameters, pagedTables, servicesAreas);
+            var viewModel = new GetAllTablesViewModel(queryParams, pagedTables, servicesAreas);
 
             return View(viewModel);
         }

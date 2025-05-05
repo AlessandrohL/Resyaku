@@ -18,6 +18,7 @@ namespace Resyaku.Application.Data.Repositories
             TimeOnly startTime,
             TimeOnly endTime);
         Task<Table?> GetByIdAsync(int tableId, bool trackChanges = true);
+        Task<TableSummaryDto?> GetTableSummaryByIdAsync(int tableId);
         Task<int> GetTotalCapacityAsync(IEnumerable<int> tableIds);
         void Add(Table table);
     }

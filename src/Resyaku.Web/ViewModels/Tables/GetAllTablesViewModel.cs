@@ -6,11 +6,11 @@ using Resyaku.Domain.Primitives;
 namespace Resyaku.Web.ViewModels.Tables
 {
     public class GetAllTablesViewModel(
-        GetAllTablesQueryParams queryParameters,
+        GetAllTablesQueryParams queryParams,
         PagedList<TableSummaryDto> pagedTables,
         List<ServiceAreaSummaryDto> serviceAreas)
     {
-        public GetAllTablesQueryParams QueryParameters { get; init; } = queryParameters;
+        public GetAllTablesQueryParams QueryParams { get; init; } = queryParams;
         public PagedList<TableSummaryDto> PagedTables { get; init; } = pagedTables;
         public List<ServiceAreaSummaryDto> ServiceAreas { get; init; } = serviceAreas;
     }

@@ -17,6 +17,8 @@ namespace Resyaku.Infrastructure.Data.Repositories
         {
             var query = dbContext.Tables
                 .AsNoTracking()
+                .WhereIf(queryParams.Enabled.HasValue,
+                    t => t.IsActive == queryParams.Enabled!.Value)
                 .WhereIf(!string.IsNullOrWhiteSpace(queryParams.SearchTerm),
                     t => EF.Functions.Like(t.Name, $"%{queryParams.SearchTerm}%"))
                 .WhereIf(queryParams.ServiceAreaId != 0,
@@ -81,6 +83,21 @@ namespace Resyaku.Infrastructure.Data.Repositories
 
             return await query
                 .Where(t => t.TableId == tableId)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<TableSummaryDto?> GetTableSummaryByIdAsync(int tableId)
+        {
+            return await dbContext.Tables
+                .AsNoTracking()
+                .Where(t => t.TableId == tableId)
+                .Select(t => new TableSummaryDto(
+                    t.TableId,
+                    t.Name,
+                    t.MinCapacity,
+                    t.MaxCapacity,
+                    new ServiceAreaSummaryDto(t.ServiceAreaId, t.ServiceArea.Name),
+                    t.IsActive))
                 .FirstOrDefaultAsync();
         }
 
