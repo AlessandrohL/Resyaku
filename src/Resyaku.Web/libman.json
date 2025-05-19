@@ -1,21 +1,43 @@
 {
-    "version": "3.0",
-    "defaultProvider": "cdnjs",
-    "libraries": [
-        {
-            "library": "axios@1.7.8",
-            "destination": "wwwroot/lib/axios/",
-            "files": [
-                "esm/axios.js"
-            ]
-        },
-        {
-            "provider": "cdnjs",
-            "library": "sweetalert2@11.15.10",
-            "destination": "wwwroot/lib/sweetalert2/",
-            "files": [
-                "sweetalert2.esm.all.min.js"
-            ]
-        }
-    ]
+  "version": "3.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "axios@1.7.8",
+      "destination": "wwwroot/lib/axios/",
+      "files": [
+        "esm/axios.js"
+      ]
+    },
+    {
+      "library": "sweetalert2@11.15.10",
+      "destination": "wwwroot/lib/sweetalert2/",
+      "files": [
+        "sweetalert2.esm.all.min.js"
+      ]
+    },
+    {
+      "library": "fullcalendar@6.1.15",
+      "destination": "wwwroot/lib/fullcalendar/",
+      "files": [
+        "index.global.min.js"
+      ]
+    },
+    {
+      "library": "popper.js@2.11.8",
+      "destination": "wwwroot/lib/popper.js/",
+      "files": [
+        "umd/popper.min.js"
+      ]
+    },
+    {
+      "library": "tippy.js@6.3.7",
+      "destination": "wwwroot/lib/tippy.js/",
+      "files": [
+        "themes/light-border.min.css",
+        "tippy.min.css",
+        "tippy.umd.min.js"
+      ]
+    }
+  ]
 }

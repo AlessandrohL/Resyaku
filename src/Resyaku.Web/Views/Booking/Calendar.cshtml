@@ -1,0 +1,18 @@
+﻿<div id="calendar-loader-container">
+	<span class="loader"></span>
+	<span>Cargando reservas...</span>
+</div>
+<div id="calendar"></div>
+
+@section Styles {
+	<link rel="stylesheet" href="~/lib/tippy.js/tippy.min.css" asp-append-version="true" />
+	<link rel="stylesheet" href="~/lib/tippy.js/themes/light-border.min.css" asp-append-version="true" />
+	<link rel="stylesheet" href="~/css/booking/booking-calendar.css" asp-append-version="true" />
+}
+
+@section Scripts {
+	<script src="~/lib/fullcalendar/index.global.min.js"></script>
+	<script src="~/lib/popper.js/umd/popper.min.js"></script>
+	<script src="~/lib/tippy.js/tippy.umd.min.js"></script>
+	<script type="module" src="~/js/booking/booking-calendar.js"></script>
+}

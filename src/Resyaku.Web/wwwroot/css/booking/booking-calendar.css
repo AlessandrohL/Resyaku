@@ -1,0 +1,34 @@
+﻿#calendar-loader-container {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.popover-content {
+    max-width: 240px;
+}
+
+.popover-title {
+    font-weight: bold;
+    font-size: 0.875rem;
+    margin-bottom: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.popover-divider {
+    height: 1px;
+    background-color: #ddd;
+    margin-bottom: 8px;
+}
+
+.popover-details {
+    font-size: 0.8rem;
+    line-height: 1.5;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Resyaku.Application.Data.Repositories;
 using Resyaku.Application.DTOs.Bookings;
+using Resyaku.Application.Features.Bookings.Queries.GetAllBookingEvents;
 using Resyaku.Application.Features.Bookings.Queries.GetAllBookings;
+using Resyaku.Application.Queries;
 using Resyaku.Domain.Entities;
 using Resyaku.Domain.Extensions;
 using Resyaku.Domain.Primitives;
@@ -44,6 +46,21 @@ namespace Resyaku.Infrastructure.Data.Repositories
                 .ToListAsync();
 
             return new CollectionResult<BookingSummaryDto>(bookings, count);
+        }
+
+        public async Task<IReadOnlyList<BookingEventDto>> GetAllBookingEventsAsync(
+            GetAllBookingEventsQueryParams queryParams)
+        {
+            DateOnly startDate = DateOnly.FromDateTime(queryParams.StartDate);
+            DateOnly endDate = DateOnly.FromDateTime(queryParams.EndDate);
+
+            return await dbContext.Bookings
+                .AsNoTracking()
+                .Where(b =>
+                    b.BookingDate >= startDate &&
+                    b.BookingDate <= endDate)
+                .Select(BookingQueries.ProjectToBookingEvent())
+                .ToListAsync();
         }
 
         public void Add(Booking booking)

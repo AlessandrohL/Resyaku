@@ -2,9 +2,10 @@
 @using Resyaku.Web.ViewModels.Bookings
 @model GetAllBookingsViewModel
 
-<div class="d-flex flex-row justify-content-between">
+<div class="d-flex flex-row justify-content-between mb-4">
     <h3 class="d-inline-block mb-3">Reservas</h3>
     <div class="d-flex flex-row justify-content-between gap-2">
+        <a asp-controller="Booking" asp-action="Calendar" class="btn btn-outline-primary align-content-center">Ver calendario</a>
         <a asp-controller="Booking" asp-action="CreateBooking" class="btn btn-success align-content-center">+ Nueva reserva</a>
     </div>
 </div>
@@ -15,15 +16,15 @@
             <input type="text" class="form-control" id="CustomerName" name="CustomerName" value="@Model.QueryParameters.CustomerName" />
         </div>
         <div class="form-group col-md-4 col-lg-2">
-            <label for="CustomerPhone" class="mb-1">Telefono</label>
+            <label for="CustomerPhone" class="mb-1">Telefono:</label>
             <input type="tel" class="form-control" id="CustomerPhone" name="CustomerPhone" value="@Model.QueryParameters.CustomerPhone" />
         </div>
         <div class="form-group col-md-4 col-lg-3">
-            <label for="CustomerEmail" class="mb-1">Correo Electrónico</label>
+            <label for="CustomerEmail" class="mb-1">Correo Electrónico:</label>
             <input type="email" class="form-control" id="CustomerEmail" name="CustomerEmail" value="@Model.QueryParameters.CustomerEmail" />
         </div>
         <div class="form-group col-md-4 col-lg-2">
-            <label for="CustomerDni" class="mb-1">DNI</label>
+            <label for="CustomerDni" class="mb-1">DNI:</label>
             <input type="text" class="form-control" id="CustomerDni" name="CustomerDni" value="@Model.QueryParameters.CustomerDni" />
         </div>
         <div class="form-group col-md-4 col-lg-2">
