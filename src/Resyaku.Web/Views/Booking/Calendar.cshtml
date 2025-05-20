@@ -1,4 +1,11 @@
-﻿<div id="calendar-loader-container">
+﻿<div class="d-flex flex-row justify-content-between mb-4">
+	<a asp-controller="Booking" asp-action="Index" class="btn btn-info align-content-center">Volver</a>
+	<h3 class="d-inline-block ms-5">Calendario</h3>
+	<div class="d-flex flex-row gap-2">
+		<a asp-controller="Booking" asp-action="CreateBooking" class="btn btn-success align-content-center">+ Nueva reserva</a>
+	</div>
+</div>
+<div id="calendar-loader-container">
 	<span class="loader"></span>
 	<span>Cargando reservas...</span>
 </div>
