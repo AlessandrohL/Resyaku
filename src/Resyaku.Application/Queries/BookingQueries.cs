@@ -16,6 +16,7 @@ namespace Resyaku.Application.Queries
                 Date = b.BookingDate,
                 StartTime = b.StartTime,
                 EndTime = b.EndTime,
+                Status = b.Status.ToString(),
                 CustomerName = b.Customer.Name,
                 CustomerEmail = b.Customer.Email,
                 CustomerDni = b.Customer.Dni

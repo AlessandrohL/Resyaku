@@ -8,6 +8,7 @@
         public required DateOnly Date { get; init; }
         public required TimeOnly StartTime { get; init; }
         public required TimeOnly EndTime { get; init; }
+        public required string Status { get; init; }
         public required string CustomerName { get; init; }
         public required string CustomerEmail { get; init; }
         public required string CustomerDni { get; init; }

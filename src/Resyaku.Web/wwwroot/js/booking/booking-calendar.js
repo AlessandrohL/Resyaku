@@ -72,10 +72,13 @@ async function getBookingEvents(info, success, failure) {
                 reference: booking.reference,
                 partySize: booking.partySize,
                 tables: booking.tables,
+                status: booking.status,
                 customerName: booking.customerName,
                 customerEmail: booking.customerEmail,
                 customerDni: booking.customerDni
-            }
+            },
+            textColor: '#343a40',
+            backgroundColor: getBgColorByStatus(booking.status)
         }))
 
         success(mappedBookings)
@@ -112,4 +115,16 @@ function createPopoverTemplate(eventInfo = {}) {
         </div>
       </div>
     `
+}
+
+function getBgColorByStatus(bookingStatus) {
+    const statusColors = {
+        Pending: '#FDE68A',
+        Confirmed: '#93C5FD',
+        Completed: '#86EFAC',
+        Cancelled: '#FCA5A5',
+        NoShow: '#D1D5DB'
+    }
+
+    return statusColors[bookingStatus] ?? statusColors.NoShow
 }
