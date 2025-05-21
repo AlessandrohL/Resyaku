@@ -1,0 +1,25 @@
+﻿<div class="d-flex flex-row justify-content-between mb-4">
+	<a asp-controller="Booking" asp-action="Index" class="btn btn-info align-content-center">Volver</a>
+	<h3 class="d-inline-block ms-5">Calendario</h3>
+	<div class="d-flex flex-row gap-2">
+		<a asp-controller="Booking" asp-action="CreateBooking" class="btn btn-success align-content-center">+ Nueva reserva</a>
+	</div>
+</div>
+<div id="calendar-loader-container">
+	<span class="loader"></span>
+	<span>Cargando reservas...</span>
+</div>
+<div id="calendar"></div>
+
+@section Styles {
+	<link rel="stylesheet" href="~/lib/tippy.js/tippy.min.css" asp-append-version="true" />
+	<link rel="stylesheet" href="~/lib/tippy.js/themes/light-border.min.css" asp-append-version="true" />
+	<link rel="stylesheet" href="~/css/booking/booking-calendar.css" asp-append-version="true" />
+}
+
+@section Scripts {
+	<script src="~/lib/fullcalendar/index.global.min.js"></script>
+	<script src="~/lib/popper.js/umd/popper.min.js"></script>
+	<script src="~/lib/tippy.js/tippy.umd.min.js"></script>
+	<script type="module" src="~/js/booking/booking-calendar.js"></script>
+}

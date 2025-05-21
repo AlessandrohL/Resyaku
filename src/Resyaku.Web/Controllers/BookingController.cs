@@ -1,7 +1,9 @@
 ﻿using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Resyaku.Application.DTOs.Bookings;
 using Resyaku.Application.Features.Bookings.Commands.CreateBooking;
+using Resyaku.Application.Features.Bookings.Queries.GetAllBookingEvents;
 using Resyaku.Application.Features.Bookings.Queries.GetAllBookings;
 using Resyaku.Application.Features.Bookings.Queries.GetBookingAvailability;
 using Resyaku.Web.Extensions;
@@ -23,6 +25,12 @@ namespace Resyaku.Web.Controllers
             var bookingsViewModel = new GetAllBookingsViewModel(queryParameters, pagedBookings);
 
             return View(bookingsViewModel);
+        }
+
+        [HttpGet("calendar")]
+        public IActionResult Calendar()
+        {
+            return View();
         }
 
         [Route("create")]
@@ -70,6 +78,16 @@ namespace Resyaku.Web.Controllers
             TempData["Booking.Created"] = $"La reserva se creó correctamente. Código de referencia: {bookingRef}";
 
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet("events")]
+        public async Task<IActionResult> GetAllBookingEvents(
+            [FromQuery] GetAllBookingEventsQueryParams queryParams,
+            CancellationToken cancellationToken)
+        {
+            List<BookingEventDto> bookings = await sender.Send(new GetAllBookingEventsQuery(queryParams));
+
+            return Ok(bookings);
         }
     }
 }
